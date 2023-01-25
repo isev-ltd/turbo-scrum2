@@ -20,6 +20,7 @@ function App() {
     const [name, setName] = useState("");
     const [sprint, setSprint] = useState({id: 0, is_current: true, created_at: "", updated_at: ""});
     const [tasks, setTasks] = useState([]);
+    const [editingTaskId, setEditingTaskId] = useState(0);
 
     useEffect(() => {
         invoke("js_get_latest_sprint")
@@ -43,12 +44,16 @@ function App() {
 
     return (
         <>
-            <Header addNewTask={() => addNewTask(sprint, setTasks, tasks)}/>
+            <Header addNewTask={() => addNewTask(sprint, setTasks, tasks, setEditingTaskId)}/>
             <div>{sprint ? sprint?.created_at : 0}</div>
             <div className="flex flex-col gap-2 mx-2">
                 {tasks.map((task: Task, index: number) => {
                     return (<TaskRow key={task.id} task={task}
-                                     updateTaskName={(text) => updateTaskText(text, task, setTasks, tasks)}/>)
+                                     editingTaskId={editingTaskId} setEditingTaskId={setEditingTaskId}
+                                     updateTaskName={(text) => updateTaskText(text, task, setTasks, tasks)}
+                                     updateTask={(key, value) => updateTask(task, key, value, setTasks, tasks)}
+
+                    />)
                 })}
             </div>
         </>
@@ -57,21 +62,27 @@ function App() {
 }
 
 async function updateTaskText(text, task, setTasks, tasks) {
-    console.log(text, task, tasks)
+    await updateTask(task, 'text', text, setTasks, tasks)
+}
+
+async function updateTask(task, key, value, setTasks, tasks) {
     setTasks(tasks.map((t) => {
         if (t.id == task.id) {
-            t.text = text
+            t[key] = value
             return t
         } else {
             return t
         }
     }));
+    console.log('updating', task, key, value)
     await invoke("js_update_task", {task})
+
 }
 
-function addNewTask(sprint, setTasks, tasks) {
-    invoke("js_create_task", {selectedSprintId: sprint.id}).then((task) => {
+function addNewTask(sprint, setTasks, tasks, setEditingTaskId) {
+    invoke("js_create_task", {selectedSprintId: sprint.id}).then((task: Task) => {
         setTasks([...tasks, task])
+        setEditingTaskId(task.id)
     })
 }
 

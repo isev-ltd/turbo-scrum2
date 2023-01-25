@@ -33,6 +33,7 @@ fn js_get_tasks(sprint_id: i32) -> Vec<Task> {
 
 #[tauri::command]
 fn js_update_task(task: Task) {
+    println!("Updating task {} - {}", task.id, task.is_completed);
     let connection = &mut establish_connection();
     update_task(connection, &task)
 }
@@ -76,7 +77,7 @@ pub fn get_latest_sprint(connection: &mut SqliteConnection) -> models::Sprint {
         .expect("Error loading sprint")
 }
 
-pub fn get_sprint_tasks(connection: &mut SqliteConnection, sprint_id: i32) -> Vec<models::Task>  {
+pub fn get_sprint_tasks(connection: &mut SqliteConnection, sprint_id: i32) -> Vec<models::Task> {
     use self::schema::tasks::dsl::*;
     tasks.filter(sprint_id.eq(sprint_id)).load(connection).expect("Rawr")
 }
@@ -84,7 +85,11 @@ pub fn get_sprint_tasks(connection: &mut SqliteConnection, sprint_id: i32) -> Ve
 pub fn update_task(connection: &mut SqliteConnection, task: &Task) {
     use self::schema::tasks::dsl::*;
     diesel::update(tasks.filter(id.eq(&task.id)))
-        .set(text.eq(&task.text))
+        .set((
+            text.eq(&task.text),
+            is_completed.eq(&task.is_completed),
+             is_blocked.eq(&task.is_blocked)
+        ))
         .execute(connection);
 }
 
