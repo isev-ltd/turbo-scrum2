@@ -4,7 +4,9 @@ diesel::table! {
     sprints (id) {
         id -> Integer,
         is_current -> Bool,
-        active_time_entry_id -> Nullable<Integer>,
+        active_task_id -> Nullable<Integer>,
+        active_task_started_at -> Nullable<Timestamp>,
+        active_task_note -> Nullable<Text>,
         created_at -> Timestamp,
         updated_at -> Timestamp,
     }
@@ -36,8 +38,6 @@ diesel::table! {
     }
 }
 
-diesel::joinable!(sprints -> time_entries (active_time_entry_id));
-diesel::joinable!(tasks -> sprints (sprint_id));
 diesel::joinable!(time_entries -> tasks (task_id));
 
 diesel::allow_tables_to_appear_in_same_query!(

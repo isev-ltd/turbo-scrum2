@@ -8,7 +8,9 @@ use crate::schema::tasks;
 pub struct Sprint {
   pub id: i32,
   pub is_current: bool,
-  pub active_time_entry_id: Option<i32>,
+  pub active_task_id: Option<i32>,
+  pub active_task_note: Option<String>,
+  pub active_task_started_at: Option<String>,
   pub created_at: String,
   pub updated_at: String,
 }
