@@ -43,20 +43,20 @@ function App() {
     }
 
     return (
-        <>
+        <div className="flex flex-col h-screen overflow-hidden">
             <Header addNewTask={() => addNewTask(sprint, setTasks, tasks, setEditingTaskId)}/>
-            <div>{sprint ? sprint?.created_at : 0}</div>
-            <div className="flex flex-col gap-2 mx-2">
+            <div className="flex flex-col gap-2 px-2 py-2 flex-grow overflow-scroll">
                 {tasks.map((task: Task, index: number) => {
                     return (<TaskRow key={task.id} task={task}
                                      editingTaskId={editingTaskId} setEditingTaskId={setEditingTaskId}
                                      updateTaskName={(text) => updateTaskText(text, task, setTasks, tasks)}
                                      updateTask={(key, value) => updateTask(task, key, value, setTasks, tasks)}
+                                     deleteTask={(task) => deleteTask(task, setTasks, tasks)}
 
                     />)
                 })}
             </div>
-        </>
+        </div>
 
     )
 }
@@ -77,6 +77,17 @@ async function updateTask(task, key, value, setTasks, tasks) {
     console.log('updating', task, key, value)
     await invoke("js_update_task", {task})
 
+}
+
+function deleteTask(task, setTasks, tasks) {
+    setTasks(tasks.filter((t) => {
+        return t.id != task.id
+    }));
+    invoke("js_delete_task", {task}).then(() => {
+        // TODO: notify deleted
+    }).catch((e) => {
+        // TODO: Could not be deleted, re-add and notify
+    })
 }
 
 function addNewTask(sprint, setTasks, tasks, setEditingTaskId) {

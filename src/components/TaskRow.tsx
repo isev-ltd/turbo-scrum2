@@ -8,11 +8,11 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function TaskRow({task, updateTaskName, editingTaskId, setEditingTaskId, updateTask}) {
+export default function TaskRow({task, updateTaskName, editingTaskId, setEditingTaskId, updateTask, deleteTask}) {
     // const [editMode, setEditMode] = useState(false);
     const [text, setText] = useState(task.text);
     console.log('editing task id', editingTaskId)
-    return (<div className="relative rounded bg-slate-100 shadow p-4 text-slate-800 flex gap-2 items-center">
+    return (<div data-id={task.id} className="relative rounded bg-slate-100 shadow p-4 text-slate-800 flex gap-2 items-center">
         {blockedOrCompleted(task)}
         {editingTaskId == task.id ? <div className="flex-grow flex rounded-md overflow-hidden shadow-sm border-slate-300 ">{taskNameInput(task, text, setText, () => { setText(task.text); setEditingTaskId(0)})}
             <button onClick={() => { updateTaskName(text); setEditingTaskId(0) }} type="button" className="z-10 bg-indigo-600 text-indigo-100 hover:text-indigo-50 hover:bg-indigo-500 transition ease-in-out duration-200">
@@ -48,6 +48,19 @@ export default function TaskRow({task, updateTaskName, editingTaskId, setEditing
                         )}
                     >
                         {task.is_blocked ? 'Mark as unblocked' : 'Mark as blocked'}
+                    </button>
+                )}
+            </Menu.Item>
+            <Menu.Item>
+                {({ active }) => (
+                    <button
+                        onClick={() => {deleteTask(task)}}
+                        className={classNames(
+                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                            'block px-4 py-2 text-sm w-full text-left'
+                        )}
+                    >
+                        Delete task
                     </button>
                 )}
             </Menu.Item>
