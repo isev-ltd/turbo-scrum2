@@ -102,7 +102,8 @@ pub fn update_task(connection: &mut SqliteConnection, task: &Task) {
         .set((
             text.eq(&task.text),
             is_completed.eq(&task.is_completed),
-            is_blocked.eq(&task.is_blocked)
+            is_blocked.eq(&task.is_blocked),
+            time_estimate_in_minutes.eq(&task.time_estimate_in_minutes),
         ))
         .execute(connection);
 }
