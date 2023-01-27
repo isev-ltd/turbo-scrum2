@@ -7,6 +7,7 @@ import nextLogo from "../assets/next.svg";
 import Header from "../components/Header";
 import TaskRow from "../components/TaskRow";
 import {Task} from "../types";
+import ActiveTask from "../components/ActiveTask";
 
 type Sprint = {
     id: number,
@@ -45,7 +46,7 @@ function App() {
     return (
         <div className="flex flex-col h-screen overflow-hidden">
             <Header addNewTask={() => addNewTask(sprint, setTasks, tasks, setEditingTaskId)}/>
-            <div className="flex flex-col gap-2 px-2 py-2 flex-grow overflow-scroll">
+            <div className="flex flex-col gap-2 px-2 py-2 flex-grow overflow-auto">
                 {tasks.map((task: Task, index: number) => {
                     return (<TaskRow key={task.id} task={task}
                                      editingTaskId={editingTaskId} setEditingTaskId={setEditingTaskId}
@@ -56,6 +57,7 @@ function App() {
                     />)
                 })}
             </div>
+            <ActiveTask sprint={sprint} task={tasks[0]} />
         </div>
 
     )
