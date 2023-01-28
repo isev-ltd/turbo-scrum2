@@ -22,6 +22,7 @@ function App() {
     const [sprint, setSprint] = useState({id: 0, is_current: true, created_at: "", updated_at: ""});
     const [tasks, setTasks] = useState([]);
     const [editingTaskId, setEditingTaskId] = useState(0);
+    const [activeTask, setActiveTask] = useState(null);
 
     useEffect(() => {
         invoke("js_get_latest_sprint")
@@ -48,7 +49,11 @@ function App() {
             <Header addNewTask={() => addNewTask(sprint, setTasks, tasks, setEditingTaskId)}/>
             <div className="flex flex-col gap-2 px-2 py-2 flex-grow overflow-auto">
                 {tasks.map((task: Task, index: number) => {
-                    return (<TaskRow key={task.id} task={task}
+                    return (<TaskRow key={task.id}
+                                     task={task}
+                                     toggleActiveTask={toggleActiveTask(sprint, task, activeTask, setActiveTask, setSprint)}
+                                     activeTask={activeTask}
+                                     index={index}
                                      editingTaskId={editingTaskId} setEditingTaskId={setEditingTaskId}
                                      updateTaskName={(text) => updateTaskText(text, task, setTasks, tasks)}
                                      updateTask={(key, value) => updateTask(task, key, value, setTasks, tasks)}
@@ -57,12 +62,26 @@ function App() {
                     />)
                 })}
             </div>
-            <ActiveTask sprint={sprint} task={tasks[0]} />
+            <ActiveTask sprint={sprint} setSprint={setSprint} task={activeTask} setActiveTask={setActiveTask} />
         </div>
 
     )
 }
 
+function toggleActiveTask(sprint, task, activeTask, setActiveTask, setSprint) {
+    return () => {
+        if(task.id == activeTask?.id) {
+            console.log('clicking active task')
+            setActiveTask(null)
+        } else {
+            console.log('clicking unactive task')
+            setActiveTask(task)
+        }
+        invoke("js_toggle_active_task", {task: (task.id == activeTask?.id ? null : task), sprint}).then((sprint : Sprint) => {
+            console.log({sprint})
+        })
+    }
+}
 async function updateTaskText(text, task, setTasks, tasks) {
     await updateTask(task, 'text', text, setTasks, tasks)
 }

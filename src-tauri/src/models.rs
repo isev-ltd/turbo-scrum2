@@ -2,9 +2,10 @@
 use serde::{Deserialize, Serialize};
 use diesel::prelude::*;
 use crate::schema::tasks;
+use crate::schema::sprints;
 
 
-#[derive(Debug, Clone, Queryable, Serialize)]
+#[derive(Debug, Clone, Queryable, Serialize, Deserialize, AsChangeset)]
 pub struct Sprint {
   pub id: i32,
   pub is_current: bool,
@@ -14,6 +15,16 @@ pub struct Sprint {
   pub created_at: String,
   pub updated_at: String,
 }
+
+#[derive(AsChangeset)]
+#[diesel(table_name = sprints)]
+#[changeset_options(treat_none_as_null = "true")]
+pub struct UpdateActiveTaskSprint {
+  pub active_task_id: Option<i32>,
+  pub active_task_note: Option<String>,
+  pub active_task_started_at: Option<String>,
+}
+
 
 #[derive(Debug, Clone, Queryable, Serialize, Deserialize)]
 pub struct Task {

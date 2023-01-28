@@ -3,15 +3,15 @@ import {CheckIcon, EllipsisVerticalIcon, LockClosedIcon} from "@heroicons/react/
 import {useState} from "react";
 import DropdownMenu from "./DropdownMenu";
 import {Menu} from '@headlessui/react'
+import PlayPauseButton from "./PlayPauseButton";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function TaskRow({task, updateTaskName, editingTaskId, setEditingTaskId, updateTask, deleteTask}) {
+export default function TaskRow({task, updateTaskName, editingTaskId, setEditingTaskId, updateTask, deleteTask, index, toggleActiveTask, activeTask}) {
     // const [editMode, setEditMode] = useState(false);
     const [text, setText] = useState(task.text);
-    console.log('editing task id', editingTaskId)
     return (<div data-id={task.id}
                  className="relative rounded bg-slate-100 shadow p-4 text-slate-800 flex gap-2 items-center">
         {blockedOrCompleted(task)}
@@ -34,7 +34,8 @@ export default function TaskRow({task, updateTaskName, editingTaskId, setEditing
         </div> : <button type="button" className="flex-grow text-left"
                          onClick={() => setEditingTaskId(task.id)}>{task.text}</button>}
         {time(task, editingTaskId, updateTask, setEditingTaskId)}
-        <DropdownMenu>
+        <PlayPauseButton onClick={toggleActiveTask} task={task} activeTask={activeTask}/>
+        <DropdownMenu direction={index >= 4 ? "up" : "down"}>
             <Menu.Item>
                 {({active}) => (
                     <button

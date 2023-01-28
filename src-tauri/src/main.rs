@@ -7,6 +7,10 @@ use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::env;
 use std::path;
+use std::time::SystemTime;
+use crate::schema::sprints::dsl::sprints;
+use chrono::{NaiveDate, NaiveDateTime, Utc};
+use diesel::dsl::now;
 
 pub mod models;
 pub mod schema;
@@ -46,6 +50,37 @@ fn js_delete_task(task: Task) {
 }
 
 #[tauri::command]
+fn js_toggle_active_task(task: Option<Task>, sprint: Sprint/*, time: String*/) -> models::Sprint {
+    use self::schema::sprints::dsl::*;
+    let connection = &mut establish_connection();
+    println!("Hello sprint! {} {:?} {:?}", sprint.id, sprint.active_task_id, task);
+    match task {
+        Some(task) => {
+            println!("Updating sprint!");
+            diesel::update(sprints.filter(id.eq(&sprint.id)))
+                .set((
+                    active_task_id.eq(&task.id),
+                    // active_task_started_at.eq(time),
+                    active_task_started_at.eq(now),
+                ))
+                .execute(connection);
+            sprint
+        }
+        None => {
+            println!("Clearing sprint!");
+            diesel::update(sprints.filter(id.eq(&sprint.id)))
+                .set(UpdateActiveTaskSprint {
+                    active_task_id: None,
+                    active_task_started_at: None,
+                    active_task_note: None,
+                })
+                .execute(connection);
+            sprint
+        }
+    }
+}
+
+#[tauri::command]
 fn js_create_task(selected_sprint_id: i32) -> models::Task {
     use crate::schema::tasks;
     use self::schema::tasks::dsl::*;
@@ -79,7 +114,7 @@ fn main() {
         println!("{}", task.text)
     }
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, js_get_latest_sprint, js_get_tasks, js_update_task, js_create_task, js_delete_task])
+        .invoke_handler(tauri::generate_handler![greet, js_get_latest_sprint, js_get_tasks, js_update_task, js_create_task, js_delete_task, js_toggle_active_task])
         .run(tauri::generate_context!())
         .expect("error while running tauri application")
 }
@@ -138,3 +173,12 @@ pub fn establish_connection() -> SqliteConnection {
         }
     }
 }
+
+// #[derive(AsChangeset)]
+// #[table_name = sprints]
+// #[changeset_options(treat_none_as_null = "true")]
+// struct UpdateSprint {
+//     pub active_task_id: Option<i32>,
+//     pub active_task_note: Option<String>,
+//     pub active_task_started_at: Option<String>,
+// }
