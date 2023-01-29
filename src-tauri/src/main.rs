@@ -64,7 +64,7 @@ fn js_toggle_active_task(task: Option<Task>, sprint: Sprint/*, time: String*/) -
                     active_task_started_at.eq(now),
                 ))
                 .execute(connection);
-            sprint
+            get_latest_sprint(connection)
         }
         None => {
             println!("Clearing sprint!");
@@ -75,7 +75,7 @@ fn js_toggle_active_task(task: Option<Task>, sprint: Sprint/*, time: String*/) -
                     active_task_note: None,
                 })
                 .execute(connection);
-            sprint
+            get_latest_sprint(connection)
         }
     }
 }

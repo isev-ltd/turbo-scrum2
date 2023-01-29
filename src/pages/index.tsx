@@ -54,7 +54,7 @@ function App() {
                                      toggleActiveTask={toggleActiveTask(sprint, task, activeTask, setActiveTask, setSprint)}
                                      activeTask={activeTask}
                                      index={index}
-                                     editingTaskId={editingTaskId} setEditingTaskId={setEditingTaskId}
+                                     // editingTaskId={editingTaskId} setEditingTaskId={setEditingTaskId}
                                      updateTaskName={(text) => updateTaskText(text, task, setTasks, tasks)}
                                      updateTask={(key, value) => updateTask(task, key, value, setTasks, tasks)}
                                      deleteTask={(task) => deleteTask(task, setTasks, tasks)}

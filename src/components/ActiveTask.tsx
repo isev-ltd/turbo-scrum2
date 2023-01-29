@@ -11,7 +11,7 @@ export default function ActiveTask({sprint, task, setSprint, toggleActiveTask}) 
     useEffect(() => {
         setInterval(() => {
             setNow(Date.now())
-        },1000);
+        }, 1000);
     }, [])
     if (!task) {
         return <></>;
@@ -33,7 +33,11 @@ animate-gradient-x w-12 rounded-full shadow-lg">
                     <div className="text-sm font-semibold ">{task?.text ?? ""}</div>
                     <div className="text-sm text-slate-700">{noteArea(sprint)}</div>
                 </div>
-                <div className="text-2xl font-extrabold">{sprint.active_task_started_at ? formatDistance(parseISO(sprint.active_task_started_at), now).replace("less than a minute", "<0m").replace(" minute", "m") : ''}</div>
+                <div className="text-2xl font-extrabold">
+                    {sprint.active_task_started_at ? formatDistance(parseISO(sprint.active_task_started_at), now)
+                        .replace("less than a minute", "<0m")
+                        .replace(" minute", "m") : ''}
+                </div>
                 <DropdownMenu direction="up">
                     <Menu.Item>
                         {({active}) => (

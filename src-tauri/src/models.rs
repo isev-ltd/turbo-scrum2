@@ -10,8 +10,8 @@ pub struct Sprint {
   pub id: i32,
   pub is_current: bool,
   pub active_task_id: Option<i32>,
-  pub active_task_note: Option<String>,
   pub active_task_started_at: Option<String>,
+  pub active_task_note: Option<String>,
   pub created_at: String,
   pub updated_at: String,
 }
@@ -21,8 +21,8 @@ pub struct Sprint {
 #[changeset_options(treat_none_as_null = "true")]
 pub struct UpdateActiveTaskSprint {
   pub active_task_id: Option<i32>,
-  pub active_task_note: Option<String>,
   pub active_task_started_at: Option<String>,
+  pub active_task_note: Option<String>,
 }
 
 
