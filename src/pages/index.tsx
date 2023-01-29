@@ -62,7 +62,12 @@ function App() {
                     />)
                 })}
             </div>
-            <ActiveTask sprint={sprint} setSprint={setSprint} task={activeTask} setActiveTask={setActiveTask} />
+            <ActiveTask
+                sprint={sprint}
+                setSprint={setSprint}
+                task={activeTask}
+                toggleActiveTask={toggleActiveTask(sprint, activeTask, activeTask, setActiveTask, setSprint)}
+            />
         </div>
 
     )
@@ -79,6 +84,7 @@ function toggleActiveTask(sprint, task, activeTask, setActiveTask, setSprint) {
         }
         invoke("js_toggle_active_task", {task: (task.id == activeTask?.id ? null : task), sprint}).then((sprint : Sprint) => {
             console.log({sprint})
+            setSprint(sprint)
         })
     }
 }
