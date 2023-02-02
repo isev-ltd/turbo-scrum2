@@ -1,8 +1,8 @@
-import {Menu} from "@headlessui/react";
+import {Menu, Transition} from "@headlessui/react";
 import {PauseCircleIcon} from "@heroicons/react/20/solid";
 import DropdownMenu from "./DropdownMenu";
 import {formatDistance, parseISO} from "date-fns";
-import {useEffect, useState} from "react";
+import {Fragment, useEffect, useState} from "react";
 import {useStore} from "../store";
 import {invoke} from "@tauri-apps/api/tauri";
 import {Sprint} from "../types";
@@ -26,10 +26,17 @@ export default function ActiveTask() {
             setNow(Date.now())
         }, 1000);
     }, [])
-    if (!activeTask) {
-        return <></>;
-    }
     return (
+        <Transition
+            show={activeTask !== null}
+            as={Fragment}
+            enter="transition ease-out duration-100 "
+            enterFrom="transform opacity-0 scale-95 rounded overflow-hidden scale-0"
+            enterTo="transform opacity-100 scale-100 "
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-0 rounded overflow-hidden"
+        >
         <div className="absolute bottom-0 left-0 right-0 flex text-slate-900">
             <div className="flex-grow flex items-center shadow-2xl bg-white p-4  gap-2">
                 <div className="text-white">
@@ -72,6 +79,7 @@ animate-gradient-x w-12 rounded-full shadow-lg">
                 </DropdownMenu>
             </div>
         </div>
+        </Transition>
     )
 }
 
