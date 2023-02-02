@@ -1,6 +1,38 @@
 import {PauseCircleIcon, PlayCircleIcon} from "@heroicons/react/20/solid";
+import {useStore} from "../store";
+import {invoke} from "@tauri-apps/api/tauri";
+import {Sprint} from "../types";
 
-export default function PlayPauseButton({onClick, activeTask, task}) {
+export default function PlayPauseButton({task}) {
+    const [
+        toggleActiveTask,
+        setActiveTask,
+        activeTask,
+        sprint,
+        setSprint
+    ]
+        = useStore((state) => [
+        state.toggleActiveTask,
+        state.setActiveTask,
+        state.activeTask,
+        state.sprint,
+        state.setSprint,
+    ])
+
+    function onClick() {
+        if(task.id == activeTask?.id) {
+            console.log('clicking active task')
+            setActiveTask(null)
+        } else {
+            console.log('clicking unactive task')
+            setActiveTask(task)
+        }
+        console.log({sprint})
+        invoke("js_toggle_active_task", {task: (task.id == activeTask?.id ? null : task), sprint}).then((s: Sprint) => {
+            console.log({s})
+            setSprint(s)
+        })
+    }
     return (
         <div className="flex items-center">
             <button className="">

@@ -3,9 +3,22 @@ import {PauseCircleIcon} from "@heroicons/react/20/solid";
 import DropdownMenu from "./DropdownMenu";
 import {formatDistance, parseISO} from "date-fns";
 import {useEffect, useState} from "react";
+import {useStore} from "../store";
+import {invoke} from "@tauri-apps/api/tauri";
+import {Sprint} from "../types";
 
-export default function ActiveTask({sprint, task, setSprint, toggleActiveTask}) {
-    console.log('started_at', sprint.active_task_started_at, Date.now())
+export default function ActiveTask() {
+    const [sprint,
+        activeTask,
+        setSprint,
+        toggleActiveTask
+    ]
+        = useStore((state) => [
+        state.sprint,
+        state.activeTask,
+        state.setSprint,
+        state.toggleActiveTask
+    ])
     const [now, setNow] = useState(Date.now())
     const [i, setI] = useState(null);
     useEffect(() => {
@@ -13,7 +26,7 @@ export default function ActiveTask({sprint, task, setSprint, toggleActiveTask}) 
             setNow(Date.now())
         }, 1000);
     }, [])
-    if (!task) {
+    if (!activeTask) {
         return <></>;
     }
     return (
@@ -21,7 +34,14 @@ export default function ActiveTask({sprint, task, setSprint, toggleActiveTask}) 
             <div className="flex-grow flex items-center shadow-2xl bg-white p-4  gap-2">
                 <div className="text-white">
 
-                    <button onClick={toggleActiveTask} className="  hover:scale-105 transition-transform easy-in-out delay-100 bg-gradient-to-r
+                    <button onClick={() => {
+                        toggleActiveTask(activeTask)
+                        invoke("js_toggle_active_task", {task: null, sprint}).then((s: Sprint) => {
+                            console.log({s})
+                            setSprint(s)
+                        })
+
+                    }} className="  hover:scale-105 transition-transform easy-in-out delay-100 bg-gradient-to-r
 from-blue-400
 to-orange-500
 via-purple-500
@@ -30,11 +50,11 @@ animate-gradient-x w-12 rounded-full shadow-lg">
                     </button>
                 </div>
                 <div className="flex flex-col flex-grow tracking-tighter">
-                    <div className="text-sm font-semibold ">{task?.text ?? ""}</div>
+                    <div className="text-sm font-semibold ">{activeTask?.text ?? ""}</div>
                     <div className="text-sm text-slate-700">{noteArea(sprint)}</div>
                 </div>
                 <div className="text-2xl font-extrabold">
-                    {sprint.active_task_started_at ? formatDistance(parseISO(sprint.active_task_started_at), now)
+                    {sprint?.active_task_started_at ? formatDistance(parseISO(sprint.active_task_started_at), now)
                         .replace("less than a minute", "<0m")
                         .replace(" minute", "m") : ''}
                 </div>
@@ -56,7 +76,7 @@ animate-gradient-x w-12 rounded-full shadow-lg">
 }
 
 function noteArea(sprint) {
-    if (sprint.active_note_text) {
+    if (sprint?.active_note_text) {
         return <button className="text-xs italic">{sprint.active_note_text}</button>
     } else {
         return <button className="text-xs italic">Set a note for this time entry...</button>
