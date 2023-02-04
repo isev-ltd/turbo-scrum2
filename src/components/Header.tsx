@@ -15,6 +15,7 @@ export default function Header({}) {
     }
 
     return (<div data-tauri-drag-region className="flex justify-end gap-2 p-1 bg-slate-200">
+        <div className="flex-grow text-center align-center">{sprint?.created_at}</div>
         <button onClick={add} type="button" className="p-2 rounded shadow"><PlusIcon className="w-6"/></button>
         <button className="p-2 rounded shadow"><MagnifyingGlassIcon className="w-6"/></button>
     </div>)

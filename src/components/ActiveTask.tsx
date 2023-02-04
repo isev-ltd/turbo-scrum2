@@ -5,7 +5,7 @@ import {formatDistance, parseISO} from "date-fns";
 import {Fragment, useEffect, useState} from "react";
 import {useStore} from "../store";
 import {invoke} from "@tauri-apps/api/tauri";
-import {Sprint} from "../types";
+import {Sprint, TimeEntry} from "../types";
 
 export default function ActiveTask() {
     const [sprint,
@@ -42,11 +42,17 @@ export default function ActiveTask() {
                 <div className="text-white">
 
                     <button onClick={() => {
-                        toggleActiveTask(activeTask)
-                        invoke("js_toggle_active_task", {task: null, sprint}).then((s: Sprint) => {
-                            console.log({s})
-                            setSprint(s)
-                        })
+                        console.log('sprint id', sprint?.id)
+                        if(sprint?.id !== undefined) {
+                            toggleActiveTask(activeTask)
+                            invoke("js_toggle_active_task", {task: null, sprint: sprint}).then((args)  => {
+                                let sprint: Sprint = args[0];
+                                let timeEntry: TimeEntry = args[1];
+                                setSprint(sprint)
+                            })
+                        } else {
+                            console.error("No sprint")
+                        }
 
                     }} className="  hover:scale-105 transition-transform easy-in-out delay-100 bg-gradient-to-r
 from-blue-400

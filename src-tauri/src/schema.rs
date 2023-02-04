@@ -33,7 +33,7 @@ diesel::table! {
         task_id -> Integer,
         note -> Nullable<Text>,
         created_at -> Timestamp,
-        ended_at -> Nullable<Timestamp>,
+        ended_at -> Timestamp,
         updated_at -> Timestamp,
     }
 }

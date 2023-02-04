@@ -1,7 +1,7 @@
 import {PauseCircleIcon, PlayCircleIcon} from "@heroicons/react/20/solid";
 import {useStore} from "../store";
 import {invoke} from "@tauri-apps/api/tauri";
-import {Sprint} from "../types";
+import {Sprint, TimeEntry} from "../types";
 
 export default function PlayPauseButton({task}) {
     const [
@@ -20,6 +20,7 @@ export default function PlayPauseButton({task}) {
     ])
 
     function onClick() {
+        let oldTask = task;
         if(task.id == activeTask?.id) {
             console.log('clicking active task')
             setActiveTask(null)
@@ -28,9 +29,10 @@ export default function PlayPauseButton({task}) {
             setActiveTask(task)
         }
         console.log({sprint})
-        invoke("js_toggle_active_task", {task: (task.id == activeTask?.id ? null : task), sprint}).then((s: Sprint) => {
-            console.log({s})
-            setSprint(s)
+        invoke("js_toggle_active_task", {task: (oldTask.id == activeTask?.id ? null : oldTask), sprint: sprint}).then((args) => {
+            let sprint: Sprint = args[0];
+            let timeEntry: TimeEntry = args[1];
+            setSprint(sprint)
         })
     }
     return (

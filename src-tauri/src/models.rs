@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use diesel::prelude::*;
 use crate::schema::tasks;
 use crate::schema::sprints;
+use crate::schema::time_entries;
 
 
 #[derive(Debug, Clone, Queryable, Serialize, Deserialize, AsChangeset)]
@@ -52,20 +53,20 @@ pub struct NewTask<'a> {
   pub time_estimate_in_minutes: i32,
 }
 
-#[derive(Debug, Clone, Queryable, Serialize)]
+#[derive(Debug, Clone, Queryable, Serialize, Deserialize)]
 pub struct TimeEntry {
   pub id: i32,
-  pub taskt_id: i32,
-  pub note: String,
+  pub task_id: i32,
+  pub note: Option<String>,
   pub created_at: String,
-  pub ended_at: Option<String>,
+  pub ended_at: String,
   pub updated_at: String,
 }
 
-// impl Sprint {
-//   fn is_current(name: &str, conn: &mut SqliteConnection) -> QueryResult<Self> {
-//     Self::all()
-//         .filter(is_current(true))
-//         .first(conn)
-//   }
-// }
+#[derive(Insertable)]
+#[diesel(table_name = time_entries)]
+pub struct NewTimeEntry {
+  pub task_id: i32,
+  pub note: Option<String>,
+  pub created_at: String,
+}

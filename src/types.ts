@@ -20,3 +20,12 @@ export type Sprint = {
     created_at: string,
     updated_at: string
 }
+
+export type TimeEntry = {
+    id: number,
+    task_id: number,
+    note: string,
+    created_at: string,
+    ended_at: string,
+    updated_at: string
+}

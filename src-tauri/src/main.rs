@@ -50,7 +50,7 @@ fn js_delete_task(task: Task) {
 }
 
 #[tauri::command]
-fn js_toggle_active_task(task: Option<Task>, sprint: Sprint/*, time: String*/) -> models::Sprint {
+fn js_toggle_active_task(task: Option<Task>, sprint: Sprint) -> (models::Sprint, Option<models::TimeEntry>) {
     use self::schema::sprints::dsl::*;
     let connection = &mut establish_connection();
     println!("Hello sprint! {} {:?} {:?}", sprint.id, sprint.active_task_id, task);
@@ -64,20 +64,53 @@ fn js_toggle_active_task(task: Option<Task>, sprint: Sprint/*, time: String*/) -
                     active_task_started_at.eq(now),
                 ))
                 .execute(connection);
-            get_latest_sprint(connection)
+            (get_latest_sprint(connection), None)
         }
         None => {
             println!("Clearing sprint!");
-            diesel::update(sprints.filter(id.eq(&sprint.id)))
-                .set(UpdateActiveTaskSprint {
-                    active_task_id: None,
-                    active_task_started_at: None,
-                    active_task_note: None,
-                })
-                .execute(connection);
-            get_latest_sprint(connection)
+            match (sprint.active_task_id, sprint.active_task_started_at) {
+                (Some(t_id), Some(t_started_at)) => {
+                    let t = create_time_entry(t_id, sprint.active_task_note, t_started_at);
+                    diesel::update(sprints.filter(id.eq(&sprint.id)))
+                        .set(UpdateActiveTaskSprint {
+                            active_task_id: None,
+                            active_task_started_at: None,
+                            active_task_note: None,
+                        })
+                        .execute(connection);
+                    let s = get_latest_sprint(connection);
+                    (s, Some(t))
+                },
+                _ => {
+                    (get_latest_sprint(connection), None)
+                }
+            }
         }
     }
+}
+
+#[tauri::command]
+fn create_time_entry(active_task_id: i32, active_task_note: Option<String>, active_task_started_at: String) -> models::TimeEntry {
+    use crate::schema::time_entries;
+    use crate::schema::time_entries::dsl::time_entries as te;
+    use crate::schema::time_entries::id;
+    use crate::schema::time_entries::task_id;
+
+    let connection = &mut establish_connection();
+    let new_time_entry = NewTimeEntry {
+        task_id: active_task_id,
+        note: active_task_note,
+        created_at: active_task_started_at,
+    };
+    diesel::insert_into(time_entries::table)
+        .values(&new_time_entry)
+        .execute(connection)
+        .expect("Error saving new task");
+    // let connection = &mut establish_connection();
+    te.filter(task_id.eq(active_task_id))
+                  .order(id.desc())
+                  .first(connection)
+                  .expect("Could not find time entry")
 }
 
 #[tauri::command]
