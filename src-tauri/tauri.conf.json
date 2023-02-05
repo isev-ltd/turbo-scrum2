@@ -19,6 +19,9 @@
       },
       "window": {
         "startDragging": true
+      },
+      "dialog": {
+        "confirm": true
       }
     },
     "bundle": {

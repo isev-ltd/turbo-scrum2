@@ -10,7 +10,7 @@ use std::path;
 use std::time::SystemTime;
 use crate::schema::sprints::dsl::sprints;
 use chrono::{NaiveDate, NaiveDateTime, Utc};
-use diesel::dsl::now;
+use diesel::dsl::{now, Update};
 
 pub mod models;
 pub mod schema;
@@ -32,6 +32,7 @@ fn js_get_latest_sprint() -> Sprint {
 #[tauri::command]
 fn js_get_tasks(sprint_id: i32) -> Vec<Task> {
     let connection = &mut establish_connection();
+    println!("Getting tasks for sprint id {}", sprint_id);
     get_sprint_tasks(connection, sprint_id)
 }
 
@@ -163,7 +164,16 @@ fn main() {
         println!("{}", task.text)
     }
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, js_get_latest_sprint, js_get_tasks, js_update_task, js_create_task, js_delete_task, js_toggle_active_task, get_time_entries_for_sprint])
+        .invoke_handler(tauri::generate_handler![
+            js_get_latest_sprint,
+            js_get_tasks,
+            js_update_task,
+            js_create_task,
+            js_delete_task,
+            js_toggle_active_task,
+            get_time_entries_for_sprint,
+            create_new_sprint
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application")
 }
@@ -171,13 +181,34 @@ fn main() {
 pub fn get_latest_sprint(connection: &mut SqliteConnection) -> models::Sprint {
     use self::schema::sprints::dsl::*;
     sprints.filter(is_current.eq(true))
+        .order(id.desc())
         .first(connection)
         .expect("Error loading sprint")
 }
 
-pub fn get_sprint_tasks(connection: &mut SqliteConnection, sprint_id: i32) -> Vec<models::Task> {
+#[tauri::command]
+fn create_new_sprint() -> models::Sprint {
+    use self::schema::sprints::dsl::*;
+    use crate::schema::sprints;
+    let connection = &mut establish_connection();
+    diesel::update(sprints)
+        .set(UpdateCurrentSprint {
+            is_current: false,
+        })
+        .execute(connection);
+
+    let new_sprint = UpdateCurrentSprint { is_current: true };
+    diesel::insert_into(sprints::table)
+        .values(&new_sprint)
+        .execute(connection)
+        .expect("Error saving new task");
+
+    get_latest_sprint(connection)
+}
+
+pub fn get_sprint_tasks(connection: &mut SqliteConnection, task_sprint_id: i32) -> Vec<models::Task> {
     use self::schema::tasks::dsl::*;
-    tasks.filter(sprint_id.eq(sprint_id)).load(connection).expect("Rawr")
+    tasks.filter(sprint_id.eq(task_sprint_id)).load(connection).expect("Rawr")
 }
 
 pub fn update_task(connection: &mut SqliteConnection, task: &Task) {

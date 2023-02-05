@@ -26,6 +26,14 @@ pub struct UpdateActiveTaskSprint {
   pub active_task_note: Option<String>,
 }
 
+#[derive(AsChangeset)]
+#[diesel(table_name = sprints)]
+#[changeset_options(treat_none_as_null = "true")]
+#[derive(Insertable)]
+pub struct UpdateCurrentSprint {
+  pub is_current: bool,
+}
+
 
 #[derive(Debug, Clone, Queryable, Serialize, Deserialize)]
 pub struct Task {
