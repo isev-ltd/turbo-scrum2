@@ -11,13 +11,15 @@ export default function ActiveTask() {
     const [sprint,
         activeTask,
         setSprint,
-        toggleActiveTask
+        toggleActiveTask,
+        addTimeEntry
     ]
         = useStore((state) => [
         state.sprint,
         state.activeTask,
         state.setSprint,
-        state.toggleActiveTask
+        state.toggleActiveTask,
+        state.addTimeEntry
     ])
     const [now, setNow] = useState(Date.now())
     const [i, setI] = useState(null);
@@ -49,6 +51,9 @@ export default function ActiveTask() {
                                 let sprint: Sprint = args[0];
                                 let timeEntry: TimeEntry = args[1];
                                 setSprint(sprint)
+                                if(timeEntry) {
+                                    addTimeEntry(timeEntry)
+                                }
                             })
                         } else {
                             console.error("No sprint")

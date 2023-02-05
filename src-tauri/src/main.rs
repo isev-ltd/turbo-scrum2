@@ -80,7 +80,7 @@ fn js_toggle_active_task(task: Option<Task>, sprint: Sprint) -> (models::Sprint,
                         .execute(connection);
                     let s = get_latest_sprint(connection);
                     (s, Some(t))
-                },
+                }
                 _ => {
                     (get_latest_sprint(connection), None)
                 }
@@ -108,9 +108,9 @@ fn create_time_entry(active_task_id: i32, active_task_note: Option<String>, acti
         .expect("Error saving new task");
     // let connection = &mut establish_connection();
     te.filter(task_id.eq(active_task_id))
-                  .order(id.desc())
-                  .first(connection)
-                  .expect("Could not find time entry")
+        .order(id.desc())
+        .first(connection)
+        .expect("Could not find time entry")
 }
 
 #[tauri::command]
@@ -138,6 +138,22 @@ fn js_create_task(selected_sprint_id: i32) -> models::Task {
         .expect("Error loading sprint")
 }
 
+#[tauri::command]
+fn get_time_entries_for_sprint(selected_sprint_id: i32) -> Vec<models::TimeEntry> {
+    use crate::schema::time_entries;
+    use crate::schema::time_entries::dsl::time_entries as te;
+    use crate::schema::time_entries::id;
+    use crate::schema::time_entries::task_id;
+
+    let connection = &mut establish_connection();
+    let tasks = get_sprint_tasks(connection, selected_sprint_id);
+
+    let task_ids: Vec<i32> = tasks.iter().map(|t| t.id).collect();
+    te.filter(task_id.eq_any(task_ids))
+        .load(connection)
+        .expect("Get time entries for sprint")
+}
+
 fn main() {
     let connection = &mut establish_connection();
     let sprint = get_latest_sprint(connection);
@@ -147,7 +163,7 @@ fn main() {
         println!("{}", task.text)
     }
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, js_get_latest_sprint, js_get_tasks, js_update_task, js_create_task, js_delete_task, js_toggle_active_task])
+        .invoke_handler(tauri::generate_handler![greet, js_get_latest_sprint, js_get_tasks, js_update_task, js_create_task, js_delete_task, js_toggle_active_task, get_time_entries_for_sprint])
         .run(tauri::generate_context!())
         .expect("error while running tauri application")
 }

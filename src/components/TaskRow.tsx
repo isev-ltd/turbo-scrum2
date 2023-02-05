@@ -1,4 +1,4 @@
-import {Task} from "../types";
+import {Task, TimeEntry} from "../types";
 import {CheckIcon, EllipsisVerticalIcon, LockClosedIcon} from "@heroicons/react/20/solid";
 import {useState} from "react";
 import DropdownMenu from "./DropdownMenu";
@@ -6,6 +6,7 @@ import {Menu} from '@headlessui/react'
 import PlayPauseButton from "./PlayPauseButton";
 import {useStore} from "../store";
 import {invoke} from "@tauri-apps/api/tauri";
+import {intervalToDuration, parseISO} from "date-fns";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -64,7 +65,7 @@ export default function TaskRow({task, index}) {
         </div> : <button type="button" className="flex-grow text-left"
                          onClick={() => setEditingTask(task.id, "text")}>{task.text}</button>}
         <Time task={task} updateTask={updateTask}/>
-        <PlayPauseButton task={task} />
+        <PlayPauseButton task={task}/>
         <DropdownMenu direction={index >= 4 ? "up" : "down"}>
             <Menu.Item>
                 {({active}) => (
@@ -135,10 +136,27 @@ function blockedOrCompleted(task) {
     return <></>;
 }
 
+function totalTimeForEntries(entries: TimeEntry[]) {
+    let times = entries.map((e) => {
+        let t = intervalToDuration({
+            start: parseISO(e.created_at),
+            end: parseISO(e.ended_at)
+        })
+        return t.minutes + (t.hours * 60) + (t.days * 24 * 60)
+    })
+    console.log({times})
+    if(times.length === 0) {
+        return 0;
+    }
+
+    let currentValue = 0
+    return times.reduce((x, currentValue) => x + currentValue)
+}
 function Time({task, updateTask}) {
     const editingTask = useStore((state) => state.editingTask)
     const setEditingTask = useStore((state) => state.setEditingTask)
     const clearEditingTask = useStore((state) => state.clearEditingTask)
+    const getTimeEntriesForTaskId = useStore((state) => state.getTimeEntriesForTaskId)
     const [estimatedTime, setEstimatedTime] = useState(task.time_estimate_in_minutes)
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
@@ -163,7 +181,7 @@ function Time({task, updateTask}) {
     } else {
         return (<div onClick={() => setEditingTask(task.id, "time")}
                      className="bg-slate-200 rounded px-2 py-1 text-sm border border-slate-200 shadow-sm">
-            {parseFloat(task.time_spent_in_minutes) / 60.0}/{parseFloat(task.time_estimate_in_minutes) / 60.0}
+            {totalTimeForEntries(getTimeEntriesForTaskId(task.id))}/{parseFloat(task.time_estimate_in_minutes) / 60.0}
             <strong
                 className="ml-2">{task.time_estimate_in_minutes > 0 ? Math.ceil((task.time_spent_in_minutes / task.time_estimate_in_minutes) * 100) : 0}%</strong>
         </div>);

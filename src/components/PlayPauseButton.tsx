@@ -9,7 +9,8 @@ export default function PlayPauseButton({task}) {
         setActiveTask,
         activeTask,
         sprint,
-        setSprint
+        setSprint,
+        addTimeEntry
     ]
         = useStore((state) => [
         state.toggleActiveTask,
@@ -17,6 +18,7 @@ export default function PlayPauseButton({task}) {
         state.activeTask,
         state.sprint,
         state.setSprint,
+        state.addTimeEntry
     ])
 
     function onClick() {
@@ -33,6 +35,9 @@ export default function PlayPauseButton({task}) {
             let sprint: Sprint = args[0];
             let timeEntry: TimeEntry = args[1];
             setSprint(sprint)
+            if(timeEntry) {
+                addTimeEntry(timeEntry)
+            }
         })
     }
     return (

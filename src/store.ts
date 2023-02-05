@@ -1,5 +1,5 @@
 import {create} from "zustand";
-import {Sprint, Task} from "./types";
+import {Sprint, Task, TimeEntry} from "./types";
 
 interface EditingTask {
     id: number | null
@@ -11,6 +11,7 @@ interface TurboScrumState {
     activeTask: Task | null
     tasks: Task[]
     editingTask: EditingTask | null
+    timeEntries: TimeEntry[]
     setTasks: (tasks: Task[]) => void
     updateTask: (task: Task) => void
     setSprint: (tasks: Sprint | null) => void
@@ -20,13 +21,17 @@ interface TurboScrumState {
     addNewTask: (task: Task) => void
     toggleActiveTask: (task: Task | null) => void
     deleteTask: (task: Task) => void
+    setTimeEntries: (timeEntries: TimeEntry[]) => void
+    addTimeEntry: (timeEntry: TimeEntry) => void
+    getTimeEntriesForTaskId: (taskId: number) => TimeEntry[]
 }
 
-export const useStore = create<TurboScrumState>()((set) => ({
+export const useStore = create<TurboScrumState>()((set, get) => ({
     sprint: null,
     tasks: [],
     activeTask: null,
     editingTask: null,
+    timeEntries: [],
     setTasks: (tasks) => set((state) => ({tasks: tasks})),
     setActiveTask: (task) => set((state) => ({activeTask: task})),
     updateTask: (task) => set((state) => ({
@@ -70,5 +75,12 @@ export const useStore = create<TurboScrumState>()((set) => ({
         return ({
             tasks: state.tasks.filter((t) => t.id != task.id)
         })
-    })
+    }),
+    setTimeEntries: (timeEntries) => set((state) => ({timeEntries: timeEntries})),
+    addTimeEntry: (timeEntry) => set((state) => {
+        return ({
+            timeEntries: [...state.timeEntries, timeEntry],
+        })
+    }),
+    getTimeEntriesForTaskId: (taskId: number) => get().timeEntries.filter((t) => t.task_id == taskId)
 }))

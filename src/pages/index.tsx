@@ -6,7 +6,7 @@ import tauriLogo from "../assets/tauri.svg";
 import nextLogo from "../assets/next.svg";
 import Header from "../components/Header";
 import TaskRow from "../components/TaskRow";
-import {Sprint, Task} from "../types";
+import {Sprint, Task, TimeEntry} from "../types";
 import ActiveTask from "../components/ActiveTask";
 import {useStore} from "../store";
 
@@ -18,7 +18,7 @@ function App() {
     // const [editingTaskId, setEditingTaskId] = useState(0);
     // const [activeTask, setActiveTask] = useState(null);
 
-    const [setSprint, setTasks, tasks] = useStore((state) => [state.setSprint, state.setTasks, state.tasks])
+    const [setSprint, setTasks, tasks, setTimeEntries] = useStore((state) => [state.setSprint, state.setTasks, state.tasks, state.setTimeEntries])
 
     useEffect(() => {
         invoke("js_get_latest_sprint")
@@ -28,11 +28,18 @@ function App() {
                 return s
             })
             .then((s: Sprint) => {
-                return invoke("js_get_tasks", {sprintId: s.id})
-
-            }).then((tasks: Task[]) => {
-            setTasks(tasks)
-        })
+                return invoke("js_get_tasks", {sprintId: s.id}).then((tasks) => {
+                    return {s: s, tasks: tasks}
+                })
+            })
+            .then(({s, tasks}: { s: Sprint, tasks: Task[] }) => {
+                setTasks(tasks)
+                return invoke("get_time_entries_for_sprint", {selectedSprintId: s.id})
+                    .then((timeEntries: TimeEntry[]) => {
+                        console.log('time entries', timeEntries)
+                        setTimeEntries(timeEntries)
+                    })
+            })
     }, [])
 
     // async function greet() {
@@ -47,13 +54,13 @@ function App() {
                 {tasks.map((task: Task, index: number) => {
                     return (<TaskRow key={task.id}
                                      task={task}
-                                     // toggleActiveTask={toggleActiveTask(sprint, task, activeTask, setActiveTask, setSprint)}
-                                     // activeTask={activeTask}
+                        // toggleActiveTask={toggleActiveTask(sprint, task, activeTask, setActiveTask, setSprint)}
+                        // activeTask={activeTask}
                                      index={index}
-                                     // editingTaskId={editingTaskId} setEditingTaskId={setEditingTaskId}
-                                     // updateTaskName={(text) => updateTaskText(text, task, setTasks, tasks)}
-                                     // updateTask={(key, value) => updateTask(task, key, value, setTasks, tasks)}
-                                     // deleteTask={(task) => deleteTask(task, setTasks, tasks)}
+                        // editingTaskId={editingTaskId} setEditingTaskId={setEditingTaskId}
+                        // updateTaskName={(text) => updateTaskText(text, task, setTasks, tasks)}
+                        // updateTask={(key, value) => updateTask(task, key, value, setTasks, tasks)}
+                        // deleteTask={(task) => deleteTask(task, setTasks, tasks)}
 
                     />)
                 })}
