@@ -12,6 +12,8 @@ interface TurboScrumState {
     tasks: Task[]
     editingTask: EditingTask | null
     timeEntries: TimeEntry[]
+    searchQuery: string
+    setSearchQuery: (searchQuery: string) => void
     setTasks: (tasks: Task[]) => void
     updateTask: (task: Task) => void
     setSprint: (tasks: Sprint | null) => void
@@ -24,10 +26,13 @@ interface TurboScrumState {
     setTimeEntries: (timeEntries: TimeEntry[]) => void
     addTimeEntry: (timeEntry: TimeEntry) => void
     getTimeEntriesForTaskId: (taskId: number) => TimeEntry[]
+    sprints: [],
+    setSprints: (sprints: Sprint[]) => void
 }
 
 export const useStore = create<TurboScrumState>()((set, get) => ({
     sprint: null,
+    sprints: [],
     tasks: [],
     activeTask: null,
     editingTask: null,
@@ -82,5 +87,8 @@ export const useStore = create<TurboScrumState>()((set, get) => ({
             timeEntries: [...state.timeEntries, timeEntry],
         })
     }),
-    getTimeEntriesForTaskId: (taskId: number) => get().timeEntries.filter((t) => t.task_id == taskId)
+    getTimeEntriesForTaskId: (taskId: number) => get().timeEntries.filter((t) => t.task_id == taskId),
+    searchQuery: '',
+    setSearchQuery: (searchQuery: string) => set((state) => ({searchQuery: searchQuery})),
+    setSprints: (sprints: Sprint[]) => set((state) => ({sprints: sprints}))
 }))

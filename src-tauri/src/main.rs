@@ -172,7 +172,8 @@ fn main() {
             js_delete_task,
             js_toggle_active_task,
             get_time_entries_for_sprint,
-            create_new_sprint
+            create_new_sprint,
+            get_sprints
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application")
@@ -183,6 +184,16 @@ pub fn get_latest_sprint(connection: &mut SqliteConnection) -> models::Sprint {
     sprints.filter(is_current.eq(true))
         .order(id.desc())
         .first(connection)
+        .expect("Error loading sprint")
+}
+
+#[tauri::command]
+fn get_sprints() -> Vec<models::Sprint> {
+    use self::schema::sprints::dsl::*;
+    let connection = &mut establish_connection();
+    sprints
+        .order(id.desc())
+        .load(connection)
         .expect("Error loading sprint")
 }
 

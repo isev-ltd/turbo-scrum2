@@ -6,4 +6,10 @@
     body {
         @apply bg-slate-300;
     }
+
+    select {
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+    }
 }

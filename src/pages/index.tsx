@@ -18,9 +18,13 @@ function App() {
     // const [editingTaskId, setEditingTaskId] = useState(0);
     // const [activeTask, setActiveTask] = useState(null);
 
-    const [setSprint, setTasks, tasks, setTimeEntries] = useStore((state) => [state.setSprint, state.setTasks, state.tasks, state.setTimeEntries])
+    const [setSprint, setTasks, tasks, setTimeEntries, searchQuery, setSprints] = useStore((state) => [state.setSprint, state.setTasks, state.tasks, state.setTimeEntries, state.searchQuery, state.setSprints])
 
     useEffect(() => {
+        invoke("get_sprints")
+            .then((sprints: Sprint[]) => {
+                setSprints(sprints);
+            });
         invoke("js_get_latest_sprint")
             .then((s: Sprint) => {
                 setSprint(s)
@@ -51,7 +55,7 @@ function App() {
         <div className="flex flex-col h-screen overflow-hidden">
             <Header /*addNewTask={() => addNewTask(sprint, setTasks, tasks, setEditingTaskId)}*//>
             <div className="flex flex-col gap-2 px-2 py-2 flex-grow overflow-auto">
-                {tasks.map((task: Task, index: number) => {
+                {tasks.filter((t) => t.text.toLowerCase().includes(searchQuery.toLowerCase())).map((task: Task, index: number) => {
                     return (<TaskRow key={task.id}
                                      task={task}
                         // toggleActiveTask={toggleActiveTask(sprint, task, activeTask, setActiveTask, setSprint)}
