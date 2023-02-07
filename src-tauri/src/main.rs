@@ -30,6 +30,16 @@ fn js_get_latest_sprint() -> Sprint {
 }
 
 #[tauri::command]
+fn get_sprint(sprint_id: i32) -> Sprint {
+    use self::schema::sprints::dsl::*;
+    let connection = &mut establish_connection();
+    sprints.filter(id.eq(sprint_id))
+        .order(id.desc())
+        .first(connection)
+        .expect("Error loading sprint")
+}
+
+#[tauri::command]
 fn js_get_tasks(sprint_id: i32) -> Vec<Task> {
     let connection = &mut establish_connection();
     println!("Getting tasks for sprint id {}", sprint_id);
@@ -173,7 +183,8 @@ fn main() {
             js_toggle_active_task,
             get_time_entries_for_sprint,
             create_new_sprint,
-            get_sprints
+            get_sprints,
+            get_sprint
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application")

@@ -8,6 +8,8 @@ import {useStore} from "../store";
 import {invoke} from "@tauri-apps/api/tauri";
 import {intervalToDuration, parseISO} from "date-fns";
 
+import {Transition} from "@headlessui/react";
+
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
@@ -34,96 +36,113 @@ export default function TaskRow({task, index}) {
     ])
     const [text, setText] = useState(task.text);
 
-    return (<div data-id={task.id}
-                 className="relative rounded bg-slate-100 shadow p-4 text-slate-800 flex gap-2 items-center"
-    >
-        {blockedOrCompleted(task)}
-        {editingTask?.id == task.id && editingTask?.key == "text" ? <div
-            className="flex-grow flex rounded-md overflow-hidden shadow-sm border-slate-300 ">
-            <TaskNameInput task={task}
-                           text={text}
-                           setText={setText}
-                           cancelUpdateTaskName={() => {
-                               setText(task.text);
-                               // setEditingTaskId(0)
-                               clearEditingTask()
-                           }}
-                           updateTask={updateTask}/>
-            <button onClick={() => {
-                // updateTask()
-                // updateTaskName(text);
-                // setEditingTaskId(0)
-                clearEditingTask()
-            }} type="button"
-                    className="z-10 bg-indigo-600 text-indigo-100 hover:text-indigo-50 hover:bg-indigo-500 transition ease-in-out duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
-                     stroke="currentColor" className="w-5 h-5 m-0.5">
-                    <path strokeLinecap="round" strokeLinejoin="round"
-                          d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-            </button>
-        </div> : <button type="button" className="flex-grow text-left"
-                         onClick={() => setEditingTask(task.id, "text")}>{task.text}</button>}
-        <Time task={task} updateTask={updateTask}/>
-        <PlayPauseButton task={task}/>
-        <DropdownMenu direction={index >= 4 ? "up" : "down"}>
-            <Menu.Item>
-                {({active}) => (
-                    <button
-                        onClick={() => {
-                            updateTask({...task, is_completed: !task.is_completed})
-                            invoke("js_update_task", {task: {...task, is_completed: !task.is_completed}}).then(() => {
-                            })
-                        }}
-                        className={classNames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                            'block px-4 py-2 text-sm w-full text-left'
-                        )}
-                    >
-                        {task.is_completed ? 'Mark as incomplete' : 'Mark as complete'}
+    return (
+
+        <Transition.Child
+            appear={true}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-y-95 rounded overflow-hidden scale-y-0"
+            enterTo="transform opacity-100 scale-y-100 "
+            leave="transition ease-in "
+            leaveFrom="transform opacity-100 scale-y-100 duration-0 "
+            leaveTo="transform opacity-0 scale-y-0 rounded overflow-hidden duration-0 "
+        >
+            <div data-id={task.id}
+                 className="relative rounded bg-slate-100 shadow mb-2 p-4 text-slate-800 flex gap-2 items-center"
+            >
+                {blockedOrCompleted(task)}
+                {editingTask?.id == task.id && editingTask?.key == "text" ? <div
+                    className="flex-grow flex rounded-md overflow-hidden shadow-sm border-slate-300 ">
+                    <TaskNameInput task={task}
+                                   text={text}
+                                   setText={setText}
+                                   cancelUpdateTaskName={() => {
+                                       setText(task.text);
+                                       // setEditingTaskId(0)
+                                       clearEditingTask()
+                                   }}
+                                   updateTask={updateTask}/>
+                    <button onClick={() => {
+                        // updateTask()
+                        // updateTaskName(text);
+                        // setEditingTaskId(0)
+                        clearEditingTask()
+                    }} type="button"
+                            className="z-10 bg-indigo-600 text-indigo-100 hover:text-indigo-50 hover:bg-indigo-500 transition ease-in-out duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                             stroke="currentColor" className="w-5 h-5 m-0.5">
+                            <path strokeLinecap="round" strokeLinejoin="round"
+                                  d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
                     </button>
-                )}
-            </Menu.Item>
-            <Menu.Item>
-                {({active}) => (
-                    <button
-                        onClick={() => {
-                            updateTask({...task, is_blocked: !task.is_blocked})
-                            invoke("js_update_task", {task: {...task, is_blocked: !task.is_blocked}})
-                                .then(() => {
-                                })
-                        }}
-                        className={classNames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                            'block px-4 py-2 text-sm w-full text-left'
+                </div> : <button type="button" className="flex-grow text-left"
+                                 onClick={() => setEditingTask(task.id, "text")}>{task.text}</button>}
+                <Time task={task} updateTask={updateTask}/>
+                <PlayPauseButton task={task}/>
+                <DropdownMenu direction={index >= 4 ? "up" : "down"}>
+                    <Menu.Item>
+                        {({active}) => (
+                            <button
+                                onClick={() => {
+                                    updateTask({...task, is_completed: !task.is_completed})
+                                    invoke("js_update_task", {
+                                        task: {
+                                            ...task,
+                                            is_completed: !task.is_completed
+                                        }
+                                    }).then(() => {
+                                    })
+                                }}
+                                className={classNames(
+                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                    'block px-4 py-2 text-sm w-full text-left'
+                                )}
+                            >
+                                {task.is_completed ? 'Mark as incomplete' : 'Mark as complete'}
+                            </button>
                         )}
-                    >
-                        {task.is_blocked ? 'Mark as unblocked' : 'Mark as blocked'}
-                    </button>
-                )}
-            </Menu.Item>
-            <Menu.Item>
-                {({active}) => (
-                    <button
-                        onClick={() => {
-                            deleteTask(task)
-                            invoke("js_delete_task", {task}).then(() => {
-                                // TODO: notify deleted
-                            }).catch((e) => {
-                                // TODO: Could not be deleted, re-add and notify
-                            })
-                        }}
-                        className={classNames(
-                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                            'block px-4 py-2 text-sm w-full text-left'
+                    </Menu.Item>
+                    <Menu.Item>
+                        {({active}) => (
+                            <button
+                                onClick={() => {
+                                    updateTask({...task, is_blocked: !task.is_blocked})
+                                    invoke("js_update_task", {task: {...task, is_blocked: !task.is_blocked}})
+                                        .then(() => {
+                                        })
+                                }}
+                                className={classNames(
+                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                    'block px-4 py-2 text-sm w-full text-left'
+                                )}
+                            >
+                                {task.is_blocked ? 'Mark as unblocked' : 'Mark as blocked'}
+                            </button>
                         )}
-                    >
-                        Delete task
-                    </button>
-                )}
-            </Menu.Item>
-        </DropdownMenu>
-    </div>);
+                    </Menu.Item>
+                    <Menu.Item>
+                        {({active}) => (
+                            <button
+                                onClick={() => {
+                                    deleteTask(task)
+                                    invoke("js_delete_task", {task}).then(() => {
+                                        // TODO: notify deleted
+                                    }).catch((e) => {
+                                        // TODO: Could not be deleted, re-add and notify
+                                    })
+                                }}
+                                className={classNames(
+                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                    'block px-4 py-2 text-sm w-full text-left'
+                                )}
+                            >
+                                Delete task
+                            </button>
+                        )}
+                    </Menu.Item>
+                </DropdownMenu>
+            </div>
+        </Transition.Child>);
 }
 
 function blockedOrCompleted(task) {
@@ -145,13 +164,14 @@ function totalTimeForEntries(entries: TimeEntry[]) {
         return t.minutes + (t.hours * 60) + (t.days * 24 * 60)
     })
     console.log({times})
-    if(times.length === 0) {
+    if (times.length === 0) {
         return 0;
     }
 
     let currentValue = 0
     return times.reduce((x, currentValue) => x + currentValue)
 }
+
 function Time({task, updateTask}) {
     const editingTask = useStore((state) => state.editingTask)
     const setEditingTask = useStore((state) => state.setEditingTask)

@@ -9,6 +9,7 @@ import {Fragment, useState} from "react";
 import {XMarkIcon} from "@heroicons/react/20/solid";
 import {Transition} from "@headlessui/react";
 import {format, parseISO} from "date-fns";
+import loadSprint from "../lib/loadSprint";
 
 enum States {
     default = 'Default',
@@ -17,7 +18,29 @@ enum States {
 
 export default function Header({}) {
 
-    const [sprint, addNewTask, setSprint, setTasks, setActiveTask, setTimeEntries, searchQuery, setSearchQuery, sprints] = useStore((state) => [state.sprint, state.addNewTask, state.setSprint, state.setTasks, state.setActiveTask, state.setTimeEntries, state.searchQuery, state.setSearchQuery, state.sprints])
+    const [
+        sprint,
+        addNewTask,
+        setSprint,
+        setTasks,
+        setActiveTask,
+        setTimeEntries,
+        searchQuery,
+        setSearchQuery,
+        sprints,
+        setSprints
+    ] = useStore((state) => [
+        state.sprint,
+        state.addNewTask,
+        state.setSprint,
+        state.setTasks,
+        state.setActiveTask,
+        state.setTimeEntries,
+        state.searchQuery,
+        state.setSearchQuery,
+        state.sprints,
+        state.setSprints
+    ])
     const [state, setState] = useState(States.default);
 
     function add() {
@@ -29,6 +52,13 @@ export default function Header({}) {
 
     function handleChange(e) {
         console.log('handling change', e)
+
+        loadSprint(parseInt(e.target.value), {
+            setSprints,
+            setSprint,
+            setTasks,
+            setTimeEntries
+        })
     }
 
     const handleFocus = (event) => event.target.select();
@@ -74,7 +104,8 @@ export default function Header({}) {
             >
                 <div className={` flex-grow flex gap-2 items-center`}>
                     <div className="flex-grow text-center align-center flex gap-2 w-full justify-center">
-                        <select value={sprint?.id ?? 0} onChange={handleChange} className="ml-16 h-10 bg-white block w-full border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm rounded-lg shadow">
+                        <select value={sprint?.id ?? 0} onChange={handleChange}
+                                className="ml-16 h-10 bg-white block w-full border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm rounded-lg shadow">
                             {sprints.map((s: Sprint) => {
                                 return <option value={s.id}>{format(parseISO(s.created_at), "PPPp")}</option>
                             })}
