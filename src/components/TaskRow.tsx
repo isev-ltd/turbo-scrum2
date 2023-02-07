@@ -37,18 +37,8 @@ export default function TaskRow({task, index}) {
     const [text, setText] = useState(task.text);
 
     return (
-
-        <Transition.Child
-            appear={true}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-y-95 rounded overflow-hidden scale-y-0"
-            enterTo="transform opacity-100 scale-y-100 "
-            leave="transition ease-in "
-            leaveFrom="transform opacity-100 scale-y-100 duration-0 "
-            leaveTo="transform opacity-0 scale-y-0 rounded overflow-hidden duration-0 "
-        >
             <div data-id={task.id}
-                 className="relative rounded bg-slate-100 shadow mb-2 p-4 text-slate-800 flex gap-2 items-center"
+                 className="relative rounded bg-slate-100 shadow p-4 text-slate-800 flex gap-2 items-center"
             >
                 {blockedOrCompleted(task)}
                 {editingTask?.id == task.id && editingTask?.key == "text" ? <div
@@ -142,17 +132,37 @@ export default function TaskRow({task, index}) {
                     </Menu.Item>
                 </DropdownMenu>
             </div>
-        </Transition.Child>);
+        );
 }
 
 function blockedOrCompleted(task) {
-    if (task.is_completed) {
-        return <CheckIcon className="w-6 bg-emerald-600 rounded-full fill-white p-1"/>
-    }
-    if (task.is_blocked) {
-        return <LockClosedIcon className="w-6 bg-rose-600  rounded-full fill-white p-1"/>
-    }
-    return <></>;
+    return (<>
+            <Transition
+                appear={true}
+                show={task.is_completed}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95 rounded overflow-hidden scale-0"
+                enterTo="transform opacity-100 scale-100 "
+                leave="transition ease-in "
+                leaveFrom="transform opacity-100 scale-100 duration-0 "
+                leaveTo="transform opacity-0 scale-0 rounded overflow-hidden duration-0 "
+            >
+                <CheckIcon className="w-6 bg-emerald-600 rounded-full fill-white p-1"/>
+            </Transition>
+            <Transition
+                appear={true}
+                show={!task.is_completed && task.is_blocked}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95 rounded overflow-hidden scale-0"
+                enterTo="transform opacity-100 scale-100 "
+                leave="transition ease-in "
+                leaveFrom="transform opacity-100 scale-100 duration-0 "
+                leaveTo="transform opacity-0 scale-0 rounded overflow-hidden duration-0 "
+            >
+                <LockClosedIcon className="w-6 bg-rose-600  rounded-full fill-white p-1"/>
+            </Transition>
+        </>
+    )
 }
 
 function totalTimeForEntries(entries: TimeEntry[]) {
@@ -190,21 +200,27 @@ function Time({task, updateTask}) {
             console.log(event)
         }
     }
+    const handleFocus = (event) => event.target.select();
+
     if (task.id == editingTask?.id && editingTask?.key == "time") {
         return (<div className="bg-slate-200 rounded px-2 py-1 text-sm border border-slate-200 shadow-sm">
             <input type="number" min="0" step="0.5"
+                   autoFocus onFocus={handleFocus}
                    className="flex rounded-md overflow-hidden shadow-sm border-slate-300 w-16 " value={estimatedTime}
                    onKeyDown={handleKeyDown} onChange={(e) => {
                 setEstimatedTime(e.target.value)
             }}/>
         </div>);
     } else {
-        return (<div onClick={() => setEditingTask(task.id, "time")}
-                     className="bg-slate-200 rounded px-2 py-1 text-sm border border-slate-200 shadow-sm">
-            {totalTimeForEntries(getTimeEntriesForTaskId(task.id))}/{parseFloat(task.time_estimate_in_minutes) / 60.0}
+        let timeInMinutes = totalTimeForEntries(getTimeEntriesForTaskId(task.id));
+        let timeInHours = ((Math.round(((timeInMinutes) / 60) * 100)) / 100).toFixed(2)
+        return (<button onClick={() => setEditingTask(task.id, "time")}
+                     className="bg-slate-200 rounded px-2 py-1 text-sm border border-slate-200 shadow-sm"
+            title={`${timeInMinutes} minutes`}>
+            {timeInHours.replace('.00', '')}/{parseFloat(task.time_estimate_in_minutes) / 60.0}
             <strong
-                className="ml-2">{task.time_estimate_in_minutes > 0 ? Math.ceil((task.time_spent_in_minutes / task.time_estimate_in_minutes) * 100) : 0}%</strong>
-        </div>);
+                className="ml-2">{task.time_estimate_in_minutes > 0 ? Math.ceil((timeInMinutes / task.time_estimate_in_minutes) * 100) : 0}%</strong>
+        </button>);
 
     }
 

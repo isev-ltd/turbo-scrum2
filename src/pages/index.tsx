@@ -63,16 +63,6 @@ function App() {
         <div className="flex flex-col h-screen overflow-hidden">
             <Header /*addNewTask={() => addNewTask(sprint, setTasks, tasks, setEditingTaskId)}*//>
             <div className="flex flex-col gap-2 px-2 py-2 flex-grow overflow-auto">
-                <Transition
-                    appear={true}
-                    show={true}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-y-95 rounded overflow-hidden scale-y-0"
-                    enterTo="transform opacity-100 scale-y-100 "
-                    leave="transition ease-in "
-                    leaveFrom="transform opacity-100 scale-y-100 duration-0 "
-                    leaveTo="transform opacity-0 scale-y-0 rounded overflow-hidden duration-0 "
-                >
                     {tasks.filter((t) => t.text.toLowerCase().includes(searchQuery.toLowerCase())).map((task: Task, index: number) => {
                         return (
 
@@ -82,7 +72,6 @@ function App() {
                             />
                         )
                     })}
-                </Transition>
             </div>
             <ActiveTask
                 // sprint={sprint}

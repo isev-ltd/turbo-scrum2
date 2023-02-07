@@ -8,7 +8,7 @@ function classNames(...classes) {
 
 export default function DropdownMenu({children, renderButton, direction = "down"}) {
     return (
-        <Menu as="div" className="relative inline-block text-left">
+        <Menu as="div" className="relative inline-block text-left z-20">
             <div className="flex">
                 {renderButton ? renderButton() : (
                     <Menu.Button
@@ -28,7 +28,7 @@ export default function DropdownMenu({children, renderButton, direction = "down"
                 leaveTo="transform opacity-0 scale-95"
             >
                 <Menu.Items
-                    className={`${direction == 'down' ? 'absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none' : '-top-2 transform -translate-y-full absolute right-0 w-56 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'}`}>
+                    className={`${direction == 'down' ? 'absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none' : '-top-2 transform -translate-y-full absolute right-0 w-56 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'} z-10`}>
                     <div className="py-1">
                         {children}
                     </div>
