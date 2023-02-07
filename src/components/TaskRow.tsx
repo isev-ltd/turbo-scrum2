@@ -65,7 +65,7 @@ export default function TaskRow({task, index}) {
                                   d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </button>
-                </div> : <button type="button" className="flex-grow text-left"
+                </div> : <button type="button" className="flex-grow text-left truncate"
                                  onClick={() => setEditingTask(task.id, "text")}>{task.text}</button>}
                 <Time task={task} updateTask={updateTask}/>
                 <PlayPauseButton task={task}/>
