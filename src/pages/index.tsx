@@ -44,7 +44,7 @@ function App() {
         //             return {s: s, tasks: tasks}
         //         })
         //     })
-        //     .then(({s, tasks}: { s: Sprint, tasks: Task[] }) => {
+        //     .then(({s, tasks}: { s: Sprint, tasks: Index[] }) => {
         //         setTasks(tasks)
         //         return invoke("get_time_entries_for_sprint", {selectedSprintId: s.id})
         //             .then((timeEntries: TimeEntry[]) => {
@@ -129,7 +129,7 @@ function App() {
 // }
 
 // function addNewTask(sprint, setTasks, tasks, setEditingTaskId) {
-//     invoke("js_create_task", {selectedSprintId: sprint.id}).then((task: Task) => {
+//     invoke("js_create_task", {selectedSprintId: sprint.id}).then((task: Index) => {
 //         setTasks([...tasks, task])
 //         setEditingTaskId(task.id)
 //     })

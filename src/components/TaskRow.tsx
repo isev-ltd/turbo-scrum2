@@ -9,6 +9,7 @@ import {invoke} from "@tauri-apps/api/tauri";
 import {intervalToDuration, parseISO} from "date-fns";
 
 import {Transition} from "@headlessui/react";
+import {WebviewWindow} from "@tauri-apps/api/window";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -127,6 +128,21 @@ export default function TaskRow({task, index}) {
                                 )}
                             >
                                 Delete task
+                            </button>
+                        )}
+                    </Menu.Item>
+                    <Menu.Item>
+                        {({active}) => (
+                            <button
+                                onClick={() => {
+                                    invoke("open_window", {url: `/tasks/${task.id}`}).then(() => {})
+                                }}
+                                className={classNames(
+                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                    'block px-4 py-2 text-sm w-full text-left'
+                                )}
+                            >
+                                Time entries
                             </button>
                         )}
                     </Menu.Item>

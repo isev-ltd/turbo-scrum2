@@ -10,6 +10,7 @@ import {XMarkIcon} from "@heroicons/react/20/solid";
 import {Transition} from "@headlessui/react";
 import {format, parseISO} from "date-fns";
 import loadSprint from "../lib/loadSprint";
+import Link from "next/link";
 
 enum States {
     default = 'Default',

@@ -11,6 +11,7 @@ use std::time::SystemTime;
 use crate::schema::sprints::dsl::sprints;
 use chrono::{NaiveDate, NaiveDateTime, Utc};
 use diesel::dsl::{now, Update};
+use tauri::utils::config::WindowConfig;
 
 pub mod models;
 pub mod schema;
@@ -144,7 +145,7 @@ fn js_create_task(selected_sprint_id: i32) -> models::Task {
         _ => 0,
     };
 //     let connection = &mut establish_connection();
-    let new_task = NewTask { sprint_id: selected_sprint_id, text: "New Task", order: order_value, is_completed: false, is_blocked: false, time_spent_in_minutes: 0, time_estimate_in_minutes: 0 };
+    let new_task = NewTask { sprint_id: selected_sprint_id, text: "New Index", order: order_value, is_completed: false, is_blocked: false, time_spent_in_minutes: 0, time_estimate_in_minutes: 0 };
     diesel::insert_into(tasks::table)
         .values(&new_task)
         .execute(connection)
@@ -193,6 +194,7 @@ fn main() {
             get_sprints,
             get_sprint,
             js_update_sprint,
+            open_window
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application")
@@ -234,6 +236,23 @@ fn create_new_sprint() -> models::Sprint {
         .expect("Error saving new task");
 
     get_latest_sprint(connection)
+}
+
+#[tauri::command]
+async fn open_window(handle: tauri::AppHandle, url: String) {
+    println!("HELLO");
+    let docs_window = tauri::WindowBuilder::new(
+        &handle,
+        url.clone(), /* the unique window label */
+        tauri::WindowUrl::App(url.into()),
+    )
+        .title("Turbo Scrum")
+        .resizable(true)
+        .focused(true)
+        .center()
+        // .position(20.0, 20.0)
+        .inner_size(450.0, 600.0)
+        .build().unwrap();
 }
 
 pub fn get_sprint_tasks(connection: &mut SqliteConnection, task_sprint_id: i32) -> Vec<models::Task> {
