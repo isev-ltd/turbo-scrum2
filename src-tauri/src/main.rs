@@ -259,6 +259,7 @@ pub fn update_sprint(connection: &mut SqliteConnection, sprint: &Sprint) {
     diesel::update(sprints.filter(id.eq(&sprint.id)))
         .set((
             active_task_note.eq(&sprint.active_task_note),
+            active_task_started_at.eq(&sprint.active_task_started_at),
         ))
         .execute(connection);
 }
