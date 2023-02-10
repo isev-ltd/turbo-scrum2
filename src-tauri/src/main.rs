@@ -54,6 +54,13 @@ fn js_update_task(task: Task) {
 }
 
 #[tauri::command]
+fn js_update_sprint(sprint: Sprint) {
+    println!("Updating sprint - {}", sprint.id);
+    let connection = &mut establish_connection();
+    update_sprint(connection, &sprint)
+}
+
+#[tauri::command]
 fn js_delete_task(task: Task) {
     println!("Updating task {} - {}", task.id, task.is_completed);
     let connection = &mut establish_connection();
@@ -184,7 +191,8 @@ fn main() {
             get_time_entries_for_sprint,
             create_new_sprint,
             get_sprints,
-            get_sprint
+            get_sprint,
+            js_update_sprint,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application")
@@ -241,6 +249,16 @@ pub fn update_task(connection: &mut SqliteConnection, task: &Task) {
             is_completed.eq(&task.is_completed),
             is_blocked.eq(&task.is_blocked),
             time_estimate_in_minutes.eq(&task.time_estimate_in_minutes),
+        ))
+        .execute(connection);
+}
+
+pub fn update_sprint(connection: &mut SqliteConnection, sprint: &Sprint) {
+    use self::schema::sprints::dsl::*;
+    use crate::schema::sprints::*;
+    diesel::update(sprints.filter(id.eq(&sprint.id)))
+        .set((
+            active_task_note.eq(&sprint.active_task_note),
         ))
         .execute(connection);
 }

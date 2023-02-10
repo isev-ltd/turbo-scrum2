@@ -45,10 +45,10 @@ export default function PlayPauseButton({task}) {
             <button className="">
                 {(activeTask?.id == task.id ? (
                     <PauseCircleIcon onClick={onClick}
-                                     className={`w-5 ${activeTask?.id == task.id ? 'fill-indigo-500' : 'fill-slate-500'} hover:fill-indigo-500 transition transform easy-in-out delay-100 hover:scale-110 hover:animate-pulse active:animate-spin`}/>
+                                     className={`w-5 ${activeTask?.id == task.id ? 'fill-indigo-500' : 'fill-slate-500'} hover:fill-indigo-500 transition transform easy-in-out delay-100 hover:scale-110 hover:animate-spin animate-pulse `}/>
                 ) : (
                     <PlayCircleIcon onClick={onClick}
-                                    className={`w-5 ${activeTask?.id == task.id ? 'fill-indigo-500' : 'fill-slate-500'} hover:fill-indigo-500 transition transform easy-in-out delay-100 hover:scale-110 hover:animate-pulse active:animate-spin`}/>
+                                    className={`w-5 ${activeTask?.id == task.id ? 'fill-indigo-500' : 'fill-slate-500'} hover:fill-indigo-500 transition transform easy-in-out delay-100 hover:scale-110 hover:animate-spin `}/>
                 ))}
             </button>
         </div>

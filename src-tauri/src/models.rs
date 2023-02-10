@@ -17,7 +17,7 @@ pub struct Sprint {
   pub updated_at: String,
 }
 
-#[derive(AsChangeset)]
+#[derive(AsChangeset, Deserialize)]
 #[diesel(table_name = sprints)]
 #[changeset_options(treat_none_as_null = "true")]
 pub struct UpdateActiveTaskSprint {
