@@ -222,6 +222,7 @@ fn main() {
             open_window,
             get_task,
             commands::delete_time_entry,
+            commands::update_time_entry,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application")

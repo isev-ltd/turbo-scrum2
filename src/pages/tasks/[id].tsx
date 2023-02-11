@@ -3,14 +3,19 @@ import {useEffect, useState} from "react";
 import {useStore} from "../../store";
 import {invoke} from "@tauri-apps/api/tauri";
 import {Task, TimeEntry} from "../../types";
-import {format, formatDistance, parseISO} from "date-fns";
+import {addMinutes, format, formatDistance, formatISO, parseISO} from "date-fns";
 import DropdownMenu from "../../components/DropdownMenu";
 import {Menu} from '@headlessui/react'
-import { emit, listen } from '@tauri-apps/api/event'
+import {emit, listen} from '@tauri-apps/api/event'
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
+
+function button(time) {
+    return (<></>)
+}
+
 
 function TaskShow() {
     const router = useRouter()
@@ -20,6 +25,33 @@ function TaskShow() {
     const [timeEntries, setTimeEntries] = useState([])
 
     const taskId = typeof id === 'string' ? parseInt(id) : id
+
+    function addTime(timeEntry, attr, minutes) {
+        setTimeEntries(timeEntries.map((te) => {
+            if (te.id == timeEntry.id && typeof te[attr] == 'string') {
+                console.log(te[attr], attr, parseISO(te[attr]), addMinutes(parseISO(te[attr]), minutes))
+                return {
+                    ...te,
+                    [attr]: formatISO(addMinutes(parseISO(te[attr]), minutes))
+                }
+            } else {
+                return te
+            }
+        }))
+        const te = {
+            ...timeEntry,
+            [attr]:
+                formatISO(addMinutes(parseISO(timeEntry[attr]), minutes))
+        }
+        invoke("update_time_entry", {
+                timeEntry: te
+            }
+        ).then(() => {
+            emit('time-entries:update', te)
+        })
+
+    }
+
     useEffect(() => {
         console.log('taskId', taskId)
         if (taskId !== undefined) {
@@ -48,15 +80,52 @@ function TaskShow() {
                             <div className="flex flex-col flex-grow">
                                 <div className="text-xs italic text-slate-600 flex gap-x-1">
                                     {format(parseISO(timeEntry.created_at), "PP")}
-                                    <div
-                                        className="bg-slate-300 rounded px-0.5 text-slate-600">{format(parseISO(timeEntry.created_at), "p")}</div>
+                                    <DropdownMenu renderButton={() => {
+                                        return <Menu.Button>{format(parseISO(timeEntry.created_at), "p")}</Menu.Button>
+                                    }}>
+                                        <Menu.Item>
+                                            <button onClick={() => {
+                                                addTime(timeEntry, 'created_at', -5)
+                                            }} type="button"
+                                                    className="block px-4 py-2 text-sm w-full text-left text-gray-700 hover:bg-slate-100">New
+                                                Add 5 minutes
+                                            </button>
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            <button onClick={() => {
+                                                addTime(timeEntry, 'created_at', 5)
+                                            }} type="button"
+                                                    className="block px-4 py-2 text-sm w-full text-left text-gray-700 hover:bg-slate-100">New
+                                                Remove 5 minutes
+                                            </button>
+                                        </Menu.Item>
+                                    </DropdownMenu>
                                     -
-                                    <div
-                                        className="bg-slate-300 rounded px-0.5 text-slate-600">{format(parseISO(timeEntry.ended_at), "p")}</div>
+                                    <DropdownMenu renderButton={() => {
+                                        return <Menu.Button>{format(parseISO(timeEntry.ended_at), "p")}</Menu.Button>
+                                    }}>
+                                        <Menu.Item>
+                                            <button onClick={() => {
+                                                addTime(timeEntry, 'ended_at', 5)
+                                            }} type="button"
+                                                    className="block px-4 py-2 text-sm w-full text-left text-gray-700 hover:bg-slate-100">New
+                                                Add 5 minutes
+                                            </button>
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            <button onClick={() => {
+                                                addTime(timeEntry, 'ended_at', -5)
+                                            }} type="button"
+                                                    className="block px-4 py-2 text-sm w-full text-left text-gray-700 hover:bg-slate-100">New
+                                                Remove 5 minutes
+                                            </button>
+                                        </Menu.Item>
+                                    </DropdownMenu>
                                 </div>
                                 <div className="text-base">
 
-                                    <strong className="mr-2">{formatDistance(parseISO(timeEntry.created_at), parseISO(timeEntry.ended_at))
+                                    <strong
+                                        className="mr-2">{formatDistance(parseISO(timeEntry.created_at), parseISO(timeEntry.ended_at))
                                         .replace("less than a minute", "<0m")
                                         .replace(' minutes', 'm')
                                         .replace(" minute", "m")

@@ -31,11 +31,22 @@ function App() {
             setTimeEntries,
             setActiveTask
         })
-        const unlisten = listen('time-entries:remove', (event) => {
+        const unlistenTimeEntriesDelete = listen('time-entries:remove', (event) => {
             // event.event is the event name (useful if you want to use a single callback fn for multiple event types)
             // event.payload is the payload object
             console.log('event', event.event, event.payload)
             setTimeEntries(timeEntries.filter((te) => te.id != event.payload))
+        })
+        const unlistenTimeEntriesUpdate = listen('time-entries:update', (event: {payload: TimeEntry}) => {
+            // event.event is the event name (useful if you want to use a single callback fn for multiple event types)
+            // event.payload is the payload object
+            setTimeEntries(timeEntries.map((te) => {
+                if (te.id == event.payload.id) {
+                    return event.payload
+                } else {
+                    return te
+                }
+            }))
         })
     }, [])
 
@@ -48,17 +59,17 @@ function App() {
         <div className="flex flex-col h-screen overflow-hidden">
             <Header /*addNewTask={() => addNewTask(sprint, setTasks, tasks, setEditingTaskId)}*//>
             <div className="flex flex-col gap-2 px-2 py-2 flex-grow overflow-auto">
-                    {tasks.filter((t) => t.text.toLowerCase().includes(searchQuery.toLowerCase())).map((task: Task, index: number) => {
-                        return (
+                {tasks.filter((t) => t.text.toLowerCase().includes(searchQuery.toLowerCase())).map((task: Task, index: number) => {
+                    return (
 
-                            <TaskRow key={task.id}
-                                     task={task}
-                                     index={index}
-                            />
-                        )
-                    })}
+                        <TaskRow key={task.id}
+                                 task={task}
+                                 index={index}
+                        />
+                    )
+                })}
             </div>
-            <ActiveTask />
+            <ActiveTask/>
         </div>
 
     )
