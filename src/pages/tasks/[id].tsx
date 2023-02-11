@@ -3,9 +3,10 @@ import {useEffect, useState} from "react";
 import {useStore} from "../../store";
 import {invoke} from "@tauri-apps/api/tauri";
 import {Task, TimeEntry} from "../../types";
-import {format, parseISO} from "date-fns";
+import {format, formatDistance, parseISO} from "date-fns";
 import DropdownMenu from "../../components/DropdownMenu";
 import {Menu} from '@headlessui/react'
+import { emit, listen } from '@tauri-apps/api/event'
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -54,6 +55,12 @@ function TaskShow() {
                                         className="bg-slate-300 rounded px-0.5 text-slate-600">{format(parseISO(timeEntry.ended_at), "p")}</div>
                                 </div>
                                 <div className="text-base">
+
+                                    <strong className="mr-2">{formatDistance(parseISO(timeEntry.created_at), parseISO(timeEntry.ended_at))
+                                        .replace("less than a minute", "<0m")
+                                        .replace(' minutes', 'm')
+                                        .replace(" minute", "m")
+                                    }</strong>
                                     {timeEntry.note}
                                 </div>
                             </div>
@@ -66,7 +73,9 @@ function TaskShow() {
                                                 setTimeEntries(timeEntries.filter((te) => {
                                                     return te.id != timeEntry.id
                                                 }))
-                                                invoke("delete_time_entry", {timeEntryId: timeEntry.id}).then(() => {})
+                                                invoke("delete_time_entry", {timeEntryId: timeEntry.id}).then(() => {
+                                                    emit('time-entries:remove', timeEntry.id)
+                                                })
                                             }}
                                             className={classNames(
                                                 active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',

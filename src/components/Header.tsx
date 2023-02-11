@@ -90,7 +90,8 @@ export default function Header({}) {
                     }}/>
 
                     <button onClick={() => setState(States.default)} className="p-2 rounded-lg shadow bg-white">
-                        <XMarkIcon className="w-6"/></button>
+                        <XMarkIcon className="w-6"/>
+                    </button>
                 </div>
             </Transition>
 

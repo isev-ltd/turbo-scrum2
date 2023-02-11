@@ -11,6 +11,7 @@ import ActiveTask from "../components/ActiveTask";
 import {useStore} from "../store";
 import loadSprint from "../lib/loadSprint";
 import {Transition} from "@headlessui/react";
+import {listen} from "@tauri-apps/api/event";
 
 function App() {
     const [greetMsg, setGreetMsg] = useState("");
@@ -20,7 +21,7 @@ function App() {
     // const [editingTaskId, setEditingTaskId] = useState(0);
     // const [activeTask, setActiveTask] = useState(null);
 
-    const [setSprint, setTasks, tasks, setTimeEntries, searchQuery, setSprints, setActiveTask] = useStore((state) => [state.setSprint, state.setTasks, state.tasks, state.setTimeEntries, state.searchQuery, state.setSprints, state.setActiveTask])
+    const [setSprint, setTasks, tasks, setTimeEntries, searchQuery, setSprints, setActiveTask, timeEntries] = useStore((state) => [state.setSprint, state.setTasks, state.tasks, state.setTimeEntries, state.searchQuery, state.setSprints, state.setActiveTask, state.timeEntries])
 
     useEffect(() => {
         loadSprint(null, {
@@ -29,6 +30,12 @@ function App() {
             setTasks,
             setTimeEntries,
             setActiveTask
+        })
+        const unlisten = listen('time-entries:remove', (event) => {
+            // event.event is the event name (useful if you want to use a single callback fn for multiple event types)
+            // event.payload is the payload object
+            console.log('event', event.event, event.payload)
+            setTimeEntries(timeEntries.filter((te) => te.id != event.payload))
         })
     }, [])
 
