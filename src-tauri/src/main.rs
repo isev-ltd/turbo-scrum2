@@ -41,6 +41,16 @@ fn get_sprint(sprint_id: i32) -> Sprint {
 }
 
 #[tauri::command]
+fn get_task(task_id: i32) -> Task {
+    use self::schema::tasks::dsl::*;
+    let connection = &mut establish_connection();
+    tasks.filter(id.eq(task_id))
+        .order(id.desc())
+        .first(connection)
+        .expect("Error loading sprint")
+}
+
+#[tauri::command]
 fn js_get_tasks(sprint_id: i32) -> Vec<Task> {
     let connection = &mut establish_connection();
     println!("Getting tasks for sprint id {}", sprint_id);
@@ -158,6 +168,19 @@ fn js_create_task(selected_sprint_id: i32) -> models::Task {
 }
 
 #[tauri::command]
+fn get_time_entries_for_task(selected_task_id: i32) -> Vec<models::TimeEntry> {
+    use crate::schema::time_entries;
+    use crate::schema::time_entries::dsl::time_entries as te;
+    use crate::schema::time_entries::id;
+    use crate::schema::time_entries::task_id;
+
+    let connection = &mut establish_connection();
+
+    te.filter(task_id.eq(selected_task_id))
+        .load(connection)
+        .expect("Get time entries for sprint")
+}
+#[tauri::command]
 fn get_time_entries_for_sprint(selected_sprint_id: i32) -> Vec<models::TimeEntry> {
     use crate::schema::time_entries;
     use crate::schema::time_entries::dsl::time_entries as te;
@@ -190,11 +213,13 @@ fn main() {
             js_delete_task,
             js_toggle_active_task,
             get_time_entries_for_sprint,
+            get_time_entries_for_task,
             create_new_sprint,
             get_sprints,
             get_sprint,
             js_update_sprint,
-            open_window
+            open_window,
+            get_task
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application")
@@ -240,7 +265,6 @@ fn create_new_sprint() -> models::Sprint {
 
 #[tauri::command]
 async fn open_window(handle: tauri::AppHandle, url: String) {
-    println!("HELLO");
     let docs_window = tauri::WindowBuilder::new(
         &handle,
         url.clone(), /* the unique window label */

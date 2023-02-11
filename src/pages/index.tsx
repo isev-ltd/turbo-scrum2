@@ -29,29 +29,6 @@ function App() {
             setTasks,
             setTimeEntries
         })
-        // invoke("get_sprints")
-        //     .then((sprints: Sprint[]) => {
-        //         setSprints(sprints);
-        //     });
-        // invoke("js_get_latest_sprint")
-        //     .then((s: Sprint) => {
-        //         setSprint(s)
-        //         console.log('fetched sprint', s)
-        //         return s
-        //     })
-        //     .then((s: Sprint) => {
-        //         return invoke("js_get_tasks", {sprintId: s.id}).then((tasks) => {
-        //             return {s: s, tasks: tasks}
-        //         })
-        //     })
-        //     .then(({s, tasks}: { s: Sprint, tasks: Index[] }) => {
-        //         setTasks(tasks)
-        //         return invoke("get_time_entries_for_sprint", {selectedSprintId: s.id})
-        //             .then((timeEntries: TimeEntry[]) => {
-        //                 console.log('time entries', timeEntries)
-        //                 setTimeEntries(timeEntries)
-        //             })
-        //     })
     }, [])
 
     // async function greet() {
@@ -73,66 +50,10 @@ function App() {
                         )
                     })}
             </div>
-            <ActiveTask
-                // sprint={sprint}
-                // setSprint={setSprint}
-                // task={activeTask}
-                // toggleActiveTask={toggleActiveTask(sprint, activeTask, activeTask, setActiveTask, setSprint)}
-            />
+            <ActiveTask />
         </div>
 
     )
 }
-
-// function toggleActiveTask(sprint, task, activeTask, setActiveTask, setSprint) {
-//     return () => {
-//         if(task.id == activeTask?.id) {
-//             console.log('clicking active task')
-//             setActiveTask(null)
-//         } else {
-//             console.log('clicking unactive task')
-//             setActiveTask(task)
-//         }
-//         invoke("js_toggle_active_task", {task: (task.id == activeTask?.id ? null : task), sprint}).then((sprint : Sprint) => {
-//             console.log({sprint})
-//             setSprint(sprint)
-//         })
-//     }
-// }
-// async function updateTaskText(text, task, setTasks, tasks) {
-//     await updateTask(task, 'text', text, setTasks, tasks)
-// }
-
-// async function updateTask(task, key, value, setTasks, tasks) {
-//     setTasks(tasks.map((t) => {
-//         if (t.id == task.id) {
-//             t[key] = value
-//             return t
-//         } else {
-//             return t
-//         }
-//     }));
-//     console.log('updating', task, key, value)
-//     await invoke("js_update_task", {task})
-//
-// }
-
-// function deleteTask(task, setTasks, tasks) {
-//     setTasks(tasks.filter((t) => {
-//         return t.id != task.id
-//     }));
-//     invoke("js_delete_task", {task}).then(() => {
-//         // TODO: notify deleted
-//     }).catch((e) => {
-//         // TODO: Could not be deleted, re-add and notify
-//     })
-// }
-
-// function addNewTask(sprint, setTasks, tasks, setEditingTaskId) {
-//     invoke("js_create_task", {selectedSprintId: sprint.id}).then((task: Index) => {
-//         setTasks([...tasks, task])
-//         setEditingTaskId(task.id)
-//     })
-// }
 
 export default App;
