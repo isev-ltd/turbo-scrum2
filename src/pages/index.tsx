@@ -20,14 +20,15 @@ function App() {
     // const [editingTaskId, setEditingTaskId] = useState(0);
     // const [activeTask, setActiveTask] = useState(null);
 
-    const [setSprint, setTasks, tasks, setTimeEntries, searchQuery, setSprints] = useStore((state) => [state.setSprint, state.setTasks, state.tasks, state.setTimeEntries, state.searchQuery, state.setSprints])
+    const [setSprint, setTasks, tasks, setTimeEntries, searchQuery, setSprints, setActiveTask] = useStore((state) => [state.setSprint, state.setTasks, state.tasks, state.setTimeEntries, state.searchQuery, state.setSprints, state.setActiveTask])
 
     useEffect(() => {
         loadSprint(null, {
             setSprints,
             setSprint,
             setTasks,
-            setTimeEntries
+            setTimeEntries,
+            setActiveTask
         })
     }, [])
 

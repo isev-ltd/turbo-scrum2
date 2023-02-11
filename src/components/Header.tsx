@@ -58,7 +58,8 @@ export default function Header({}) {
             setSprints,
             setSprint,
             setTasks,
-            setTimeEntries
+            setTimeEntries,
+            setActiveTask
         })
     }
 

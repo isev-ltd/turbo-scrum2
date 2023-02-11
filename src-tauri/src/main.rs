@@ -15,6 +15,7 @@ use tauri::utils::config::WindowConfig;
 
 pub mod models;
 pub mod schema;
+pub mod commands;
 
 use self::models::*;
 
@@ -219,7 +220,8 @@ fn main() {
             get_sprint,
             js_update_sprint,
             open_window,
-            get_task
+            get_task,
+            commands::delete_time_entry,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application")

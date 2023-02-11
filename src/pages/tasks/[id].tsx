@@ -63,6 +63,10 @@ function TaskShow() {
                                     {({active}) => (
                                         <button
                                             onClick={() => {
+                                                setTimeEntries(timeEntries.filter((te) => {
+                                                    return te.id != timeEntry.id
+                                                }))
+                                                invoke("delete_time_entry", {timeEntryId: timeEntry.id}).then(() => {})
                                             }}
                                             className={classNames(
                                                 active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
