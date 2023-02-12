@@ -12,6 +12,7 @@ import {useStore} from "../store";
 import loadSprint from "../lib/loadSprint";
 import {Transition} from "@headlessui/react";
 import {listen} from "@tauri-apps/api/event";
+import {WebviewWindow} from "@tauri-apps/api/window";
 
 function App() {
     const [greetMsg, setGreetMsg] = useState("");
@@ -48,6 +49,12 @@ function App() {
                 }
             }))
         })
+
+        const unlistenWindow = listen('window:open', (event) => {
+            // event.event is the event name (useful if you want to use a single callback fn for multiple event types)
+            // event.payload is the payload object
+            invoke("open_window", {url: `/report`}).then(() => {})
+        });
     }, [])
 
     // async function greet() {

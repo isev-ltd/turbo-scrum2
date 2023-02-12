@@ -7,17 +7,25 @@ use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::env;
 use std::path;
+use std::path::is_separator;
 use std::time::SystemTime;
 use crate::schema::sprints::dsl::sprints;
 use chrono::{NaiveDate, NaiveDateTime, Utc};
 use diesel::dsl::{now, Update};
 use tauri::utils::config::WindowConfig;
+use tauri::{AboutMetadata, AppHandle, CustomMenuItem, Manager, Menu, MenuItem, Submenu};
 
 pub mod models;
 pub mod schema;
 pub mod commands;
 
 use self::models::*;
+
+
+#[derive(Clone, serde::Serialize)]
+struct Payload {
+    url: String,
+}
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -181,6 +189,7 @@ fn get_time_entries_for_task(selected_task_id: i32) -> Vec<models::TimeEntry> {
         .load(connection)
         .expect("Get time entries for sprint")
 }
+
 #[tauri::command]
 fn get_time_entries_for_sprint(selected_sprint_id: i32) -> Vec<models::TimeEntry> {
     use crate::schema::time_entries;
@@ -205,7 +214,34 @@ fn main() {
     for task in tasks {
         println!("{}", task.text)
     }
+    let default_menu = Submenu::new(
+        "Self",
+        Menu::new()
+            .add_native_item(MenuItem::About("Turbo Scrum".to_string(), Default::default())
+            ),
+    );
+    let file_menu = Submenu::new("File", Menu::new()
+        .add_native_item(MenuItem::Hide)
+        .add_native_item(MenuItem::HideOthers)
+        .add_native_item(MenuItem::CloseWindow)
+        .add_native_item(MenuItem::Separator)
+        .add_native_item(MenuItem::Quit),
+    );
+    let edit_menu = Submenu::new("Edit", Menu::new()
+        .add_native_item(MenuItem::Copy)
+        .add_native_item(MenuItem::Paste),
+    );
+    let view_menu = Submenu::new("View", Menu::new()
+        .add_item(CustomMenuItem::new("GenerateReport", "Generate Report")),
+    );
+
+    let menu = Menu::new()
+        .add_submenu(default_menu)
+        .add_submenu(file_menu)
+        .add_submenu(edit_menu)
+        .add_submenu(view_menu);
     tauri::Builder::default()
+        .menu(menu)
         .invoke_handler(tauri::generate_handler![
             js_get_latest_sprint,
             js_get_tasks,
@@ -224,6 +260,17 @@ fn main() {
             commands::delete_time_entry,
             commands::update_time_entry,
         ])
+        .on_menu_event(|event| {
+            match event.menu_item_id() {
+                "GenerateReport" => {
+                    event
+                        .window()
+                        .emit("window:open", Payload { url: "/report".into() })
+                        .unwrap();
+                }
+                _ => {}
+            }
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application")
 }
