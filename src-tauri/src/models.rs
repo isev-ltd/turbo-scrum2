@@ -6,7 +6,7 @@ use crate::schema::sprints;
 use crate::schema::time_entries;
 
 
-#[derive(Debug, Clone, Queryable, Serialize, Deserialize, AsChangeset)]
+#[derive(Debug, Clone, Queryable, Serialize, Deserialize, AsChangeset, Identifiable)]
 pub struct Sprint {
   pub id: i32,
   pub is_current: bool,
@@ -47,6 +47,14 @@ pub struct Task {
   pub time_estimate_in_minutes: i32,
   pub created_at: String,
   pub updated_at: String,
+}
+
+#[derive(Debug, Clone, Queryable, Serialize, Deserialize, Associations)]
+#[diesel(belongs_to(Sprint, foreign_key=sprint_id))]
+#[diesel(table_name = tasks)]
+pub struct JoinTask {
+  id: i32,
+  pub sprint_id: i32,
 }
 
 #[derive(Insertable)]

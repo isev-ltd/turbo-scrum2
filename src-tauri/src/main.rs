@@ -259,6 +259,7 @@ fn main() {
             get_task,
             commands::delete_time_entry,
             commands::update_time_entry,
+            commands::get_report,
         ])
         .on_menu_event(|event| {
             match event.menu_item_id() {
@@ -315,6 +316,7 @@ fn create_new_sprint() -> models::Sprint {
 
 #[tauri::command]
 async fn open_window(handle: tauri::AppHandle, url: String) {
+    println!("Open window!");
     let docs_window = tauri::WindowBuilder::new(
         &handle,
         url.clone(), /* the unique window label */
