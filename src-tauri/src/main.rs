@@ -13,7 +13,7 @@ use crate::schema::sprints::dsl::sprints;
 use chrono::{NaiveDate, NaiveDateTime, Utc};
 use diesel::dsl::{now, Update};
 use tauri::utils::config::WindowConfig;
-use tauri::{AboutMetadata, AppHandle, CustomMenuItem, Manager, Menu, MenuItem, Submenu};
+use tauri::{AboutMetadata, AppHandle, CustomMenuItem, Manager, Menu, MenuItem, Submenu, WindowUrl};
 
 pub mod models;
 pub mod schema;
@@ -264,10 +264,15 @@ fn main() {
         .on_menu_event(|event| {
             match event.menu_item_id() {
                 "GenerateReport" => {
-                    event
-                        .window()
-                        .emit("window:open", Payload { url: "/report".into() })
-                        .unwrap();
+                    let app_handle = event.window().app_handle();
+                    // let handle = event.
+                    let docs_window = tauri::WindowBuilder::new(
+                        &app_handle,
+                        "external", /* the unique window label */
+                        tauri::WindowUrl::App("/report".parse().unwrap()),
+                    )
+                        .title("Turbo Scrum Report")
+                        .build().unwrap();
                 }
                 _ => {}
             }
