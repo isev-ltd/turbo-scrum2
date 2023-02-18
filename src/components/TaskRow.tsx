@@ -70,7 +70,7 @@ export default function TaskRow({task, index}) {
                                  onClick={() => setEditingTask(task.id, "text")}>{task.text}</button>}
                 <Time task={task} updateTask={updateTask}/>
                 <PlayPauseButton task={task}/>
-                <DropdownMenu direction={index >= 4 ? "up" : "down"}>
+                <DropdownMenu renderButton={null} direction={index >= 4 ? "up" : "down"}>
                     <Menu.Item>
                         {({active}) => (
                             <button

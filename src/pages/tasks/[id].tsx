@@ -80,7 +80,7 @@ function TaskShow() {
                             <div className="flex flex-col flex-grow">
                                 <div className="text-xs italic text-slate-600 flex gap-x-1">
                                     {format(parseISO(timeEntry.created_at), "PP")}
-                                    <DropdownMenu renderButton={() => {
+                                    <DropdownMenu direction={"down"} renderButton={() => {
                                         return <Menu.Button>{format(parseISO(timeEntry.created_at), "p")}</Menu.Button>
                                     }}>
                                         <Menu.Item>
@@ -101,7 +101,7 @@ function TaskShow() {
                                         </Menu.Item>
                                     </DropdownMenu>
                                     -
-                                    <DropdownMenu renderButton={() => {
+                                    <DropdownMenu direction="down" renderButton={() => {
                                         return <Menu.Button>{format(parseISO(timeEntry.ended_at), "p")}</Menu.Button>
                                     }}>
                                         <Menu.Item>
@@ -134,7 +134,7 @@ function TaskShow() {
                                 </div>
                             </div>
 
-                            <DropdownMenu direction={index >= 4 ? "up" : "down"}>
+                            <DropdownMenu renderButton={null} direction={index >= 4 ? "up" : "down"}>
                                 <Menu.Item>
                                     {({active}) => (
                                         <button

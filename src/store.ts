@@ -26,7 +26,7 @@ interface TurboScrumState {
     setTimeEntries: (timeEntries: TimeEntry[]) => void
     addTimeEntry: (timeEntry: TimeEntry) => void
     getTimeEntriesForTaskId: (taskId: number) => TimeEntry[]
-    sprints: [],
+    sprints: Sprint[],
     setSprints: (sprints: Sprint[]) => void
 }
 

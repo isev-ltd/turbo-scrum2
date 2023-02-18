@@ -83,7 +83,7 @@ animate-gradient-x w-12 rounded-full shadow-lg">
                                 .replace(" minute", "m")
                             : ''}
                     </div>
-                    <DropdownMenu direction="up">
+                    <DropdownMenu renderButton={null} direction="up">
                         <Menu.Item>
                             {({active}) => (
                                 <button

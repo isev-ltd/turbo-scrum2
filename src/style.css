@@ -12,4 +12,14 @@
         -webkit-appearance: none;
         appearance: none;
     }
+
+
+}
+
+.react-datepicker-wrapper {
+    width: auto !important;
+    @apply ml-2 mt-2;
+}
+.react-datepicker-wrapper input {
+    @apply bg-white block w-full border-gray-300 py-2 pl-3 pr-3 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm rounded-lg shadow;
 }
