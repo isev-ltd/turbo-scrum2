@@ -33,7 +33,7 @@
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
-      "copyright": "",
+      "copyright": "isev",
       "deb": {
         "depends": []
       },
@@ -48,11 +48,12 @@
       "identifier": "io.fullstackstanley.turbo-scrum2",
       "longDescription": "",
       "macOS": {
-        "entitlements": null,
+        "entitlements": "./entitlements.plist",
+        "minimumSystemVersion": "10.15",
         "exceptionDomain": "",
+        "signingIdentity": "Developer ID Application: Mitchell Stanley (STNMC59B28)",
         "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
+        "providerShortName": "STNMC59B28"
       },
       "resources": [],
       "shortDescription": "",
@@ -67,14 +68,20 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": true,
+      "endpoints": [
+        "https://turboscrum.releases.mitch.omg.lol/{{target}}/{{current_version}}",
+        "https://turboscrum.releases.mitch.omg.lol/feed"
+      ],
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEIxRDczOTE5NUZGMDhBQjMKUldTeml2QmZHVG5Yc1lpZGxlOEdlRmtRbTZrQzhWUzBxNnVRNWtSYmFsVVRKNXZwZjU3cEYzdGMK"
     },
     "windows": [
       {
         "fullscreen": false,
         "height": 700,
         "resizable": true,
-        "title": "",
+        "title": "Turbo Scrum 2",
         "width": 500,
         "titleBarStyle": "Overlay"
       }
