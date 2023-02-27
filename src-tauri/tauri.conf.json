@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "turbo-scrum",
+    "productName": "Turbo Scrum 2",
     "version": "0.0.1"
   },
   "tauri": {
@@ -32,7 +32,7 @@
     },
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
+      "category": "DeveloperTools",
       "copyright": "isev",
       "deb": {
         "depends": []
@@ -49,14 +49,14 @@
       "longDescription": "",
       "macOS": {
         "entitlements": "./entitlements.plist",
-        "minimumSystemVersion": "10.15",
+        "minimumSystemVersion": "11.0",
         "exceptionDomain": "",
         "signingIdentity": "Developer ID Application: Mitchell Stanley (STNMC59B28)",
         "frameworks": [],
         "providerShortName": "STNMC59B28"
       },
       "resources": [],
-      "shortDescription": "",
+      "shortDescription": "A tool for time tracking in scrums",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,
@@ -74,7 +74,7 @@
         "https://turboscrum.releases.mitch.omg.lol/feed"
       ],
       "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEIxRDczOTE5NUZGMDhBQjMKUldTeml2QmZHVG5Yc1lpZGxlOEdlRmtRbTZrQzhWUzBxNnVRNWtSYmFsVVRKNXZwZjU3cEYzdGMK"
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDk4NzY1MTIxM0ZCRDY1MjUKUldRbFpiMC9JVkYybUZWZGo2S0thU3plQkUzSW9ja1NNRzBjMEduczZ0QjhuSE9Ga25EL1RnaXkK"
     },
     "windows": [
       {

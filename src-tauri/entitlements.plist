@@ -3,31 +3,12 @@
 <plist version="1.0">
   <dict>
     <key>com.apple.security.app-sandbox</key>
-    <false/>
+    <true/>
     <key>com.apple.security.files.user-selected.read-write</key>
     <true/>
     <key>com.apple.security.network.server</key>
     <true/>
     <key>com.apple.security.network.client</key>
     <true/>
-    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
-    <true/>
-    <key>NSAppleEventsUsageDescription</key>
-    <string>Turbo Scrum needs access to your System Events 😎</string>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-      <key>NSExceptionDomains</key>
-      <dict>
-        <key>io.fullstackstanley.turbo-scrum2</key>
-        <dict>
-          <!--Include to allow subdomains-->
-          <key>NSIncludesSubdomains</key>
-          <true/>
-          <!--Include to allow HTTP requests-->
-          <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-          <true/>
-        </dict>
-      </dict>
-    </dict>
   </dict>
 </plist>
