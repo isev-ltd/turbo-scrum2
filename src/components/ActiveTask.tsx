@@ -88,6 +88,33 @@ animate-gradient-x w-12 rounded-full shadow-lg">
                             {({active}) => (
                                 <button
                                     onClick={() => {
+                                        const newTime = formatISO(addMinutes(parseISO(sprint.active_task_started_at), -15))
+                                        if (sprint.active_task_started_at) {
+                                            setSprint({
+                                                ...sprint,
+                                                active_task_started_at: newTime
+                                            })
+                                            invoke("js_update_sprint", {
+                                                sprint: {
+                                                    ...sprint,
+                                                    active_task_started_at: newTime
+                                                }
+                                            }).then(() => {
+                                                setEditingNote(false)
+                                                // setNote('')
+                                            })
+
+                                        }
+                                    }}
+                                    className={'text-gray-700 block px-4 py-2 text-sm w-full text-left'}>
+                                    Add 15 minutes
+                                </button>
+                            )}
+                        </Menu.Item>
+                        <Menu.Item>
+                            {({active}) => (
+                                <button
+                                    onClick={() => {
                                         const newTime = formatISO(addMinutes(parseISO(sprint.active_task_started_at), -5))
                                         if (sprint.active_task_started_at) {
                                             setSprint({
@@ -108,6 +135,61 @@ animate-gradient-x w-12 rounded-full shadow-lg">
                                     }}
                                     className={'text-gray-700 block px-4 py-2 text-sm w-full text-left'}>
                                     Add 5 minutes
+                                </button>
+                            )}
+                        </Menu.Item>
+
+                        <Menu.Item>
+                            {({active}) => (
+                                <button
+                                    onClick={() => {
+                                        const newTime = formatISO(addMinutes(parseISO(sprint.active_task_started_at), 5))
+                                        if (sprint.active_task_started_at) {
+                                            setSprint({
+                                                ...sprint,
+                                                active_task_started_at: newTime
+                                            })
+                                            invoke("js_update_sprint", {
+                                                sprint: {
+                                                    ...sprint,
+                                                    active_task_started_at: newTime
+                                                }
+                                            }).then(() => {
+                                                setEditingNote(false)
+                                                // setNote('')
+                                            })
+
+                                        }
+                                    }}
+                                    className={'text-gray-700 block px-4 py-2 text-sm w-full text-left'}>
+                                    Remove 5 minutes
+                                </button>
+                            )}
+                        </Menu.Item>
+                        <Menu.Item>
+                            {({active}) => (
+                                <button
+                                    onClick={() => {
+                                        const newTime = formatISO(addMinutes(parseISO(sprint.active_task_started_at), 15))
+                                        if (sprint.active_task_started_at) {
+                                            setSprint({
+                                                ...sprint,
+                                                active_task_started_at: newTime
+                                            })
+                                            invoke("js_update_sprint", {
+                                                sprint: {
+                                                    ...sprint,
+                                                    active_task_started_at: newTime
+                                                }
+                                            }).then(() => {
+                                                setEditingNote(false)
+                                                // setNote('')
+                                            })
+
+                                        }
+                                    }}
+                                    className={'text-gray-700 block px-4 py-2 text-sm w-full text-left'}>
+                                    Remove 15 minutes
                                 </button>
                             )}
                         </Menu.Item>

@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Turbo Scrum 2",
-    "version": "0.0.1"
+    "version": "0.0.2"
   },
   "tauri": {
     "allowlist": {
@@ -24,7 +24,9 @@
         "open": true
       },
       "window": {
-        "startDragging": true
+        "all": true,
+        "startDragging": true,
+        "create": true
       },
       "dialog": {
         "confirm": true
@@ -81,7 +83,7 @@
         "fullscreen": false,
         "height": 700,
         "resizable": true,
-        "title": "Turbo Scrum 2",
+        "title": "",
         "width": 500,
         "titleBarStyle": "Overlay"
       }

@@ -110,7 +110,7 @@ export default function Header({}) {
                         <select value={sprint?.id ?? 0} onChange={handleChange}
                                 className="ml-16 h-10 bg-white block w-full border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm rounded-lg shadow">
                             {sprints.map((s: Sprint) => {
-                                return <option value={s.id}>{format(parseISO(s.created_at), "PPPp")}</option>
+                                return <option key={s.id} value={s.id}>{format(parseISO(s.created_at), "PPPp")}</option>
                             })}
                         </select>
                     </div>

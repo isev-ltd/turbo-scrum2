@@ -375,6 +375,7 @@ fn create_new_sprint(app_handle: tauri::AppHandle) -> models::Sprint {
 #[tauri::command]
 async fn open_window(handle: tauri::AppHandle, url: String) {
     println!("Open window!");
+
     let docs_window = tauri::WindowBuilder::new(
         &handle,
         url.clone(), /* the unique window label */

@@ -1,10 +1,10 @@
 import {useRouter} from 'next/router'
 import {useEffect, useState} from "react";
-import {useStore} from "../../store";
+import {useStore} from "../store";
 import {invoke} from "@tauri-apps/api/tauri";
-import {Task, TimeEntry} from "../../types";
+import {Task, TimeEntry} from "../types";
 import {addMinutes, format, formatDistance, formatISO, parseISO} from "date-fns";
-import DropdownMenu from "../../components/DropdownMenu";
+import DropdownMenu from "../components/DropdownMenu";
 import {Menu} from '@headlessui/react'
 import {emit, listen} from '@tauri-apps/api/event'
 
@@ -78,10 +78,11 @@ function TaskShow() {
                         <div key={timeEntry.id}
                              className="relative items-center rounded bg-slate-100 shadow p-4 text-slate-800 flex   items-start text-left">
                             <div className="flex flex-col flex-grow">
-                                <div className="text-xs italic text-slate-600 flex gap-x-1">
+                                <div className="text-xs italic text-slate-600 flex gap-x-1 items-center
+                                ">
                                     {format(parseISO(timeEntry.created_at), "PP")}
-                                    <DropdownMenu direction={"down"} renderButton={() => {
-                                        return <Menu.Button>{format(parseISO(timeEntry.created_at), "p")}</Menu.Button>
+                                    <DropdownMenu direction={"down"} className="left-0" renderButton={() => {
+                                        return <Menu.Button className="bg-slate-300 p-0.5 rounded hover:bg-slate-200">{format(parseISO(timeEntry.created_at), "p")}</Menu.Button>
                                     }}>
                                         <Menu.Item>
                                             <button onClick={() => {
@@ -93,16 +94,32 @@ function TaskShow() {
                                         </Menu.Item>
                                         <Menu.Item>
                                             <button onClick={() => {
+                                                addTime(timeEntry, 'created_at', -15)
+                                            }} type="button"
+                                                    className="block px-4 py-2 text-sm w-full text-left text-gray-700 hover:bg-slate-100">New
+                                                Add 15 minutes
+                                            </button>
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            <button onClick={() => {
                                                 addTime(timeEntry, 'created_at', 5)
                                             }} type="button"
                                                     className="block px-4 py-2 text-sm w-full text-left text-gray-700 hover:bg-slate-100">New
                                                 Remove 5 minutes
                                             </button>
                                         </Menu.Item>
+                                        <Menu.Item>
+                                            <button onClick={() => {
+                                                addTime(timeEntry, 'created_at', 15)
+                                            }} type="button"
+                                                    className="block px-4 py-2 text-sm w-full text-left text-gray-700 hover:bg-slate-100">New
+                                                Remove 15 minutes
+                                            </button>
+                                        </Menu.Item>
                                     </DropdownMenu>
                                     -
                                     <DropdownMenu direction="down" renderButton={() => {
-                                        return <Menu.Button>{format(parseISO(timeEntry.ended_at), "p")}</Menu.Button>
+                                        return <Menu.Button className="bg-slate-300 p-0.5 rounded hover:bg-slate-200">{format(parseISO(timeEntry.ended_at), "p")}</Menu.Button>
                                     }}>
                                         <Menu.Item>
                                             <button onClick={() => {
