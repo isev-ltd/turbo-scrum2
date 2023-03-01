@@ -70,7 +70,7 @@ function App() {
     return (
         <div className="flex flex-col h-screen overflow-hidden">
             <Header /*addNewTask={() => addNewTask(sprint, setTasks, tasks, setEditingTaskId)}*//>
-            <div className="flex flex-col gap-2 px-2 py-2 flex-grow overflow-auto">
+            <div className="flex flex-col gap-2 px-2 py-2 flex-grow overflow-auto pb-20">
                 {tasks.filter((t) => t.text.toLowerCase().includes(searchQuery.toLowerCase())).map((task: Task, index: number) => {
                     return (
 

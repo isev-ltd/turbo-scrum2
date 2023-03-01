@@ -89,7 +89,7 @@ export default function Header({}) {
                         setSearchQuery(e.target.value)
                     }}/>
 
-                    <button onClick={() => setState(States.default)} className="p-2 rounded-lg shadow bg-white">
+                    <button onClick={() => { setState(States.default); setSearchQuery('')}} className="p-2 rounded-lg shadow bg-white">
                         <XMarkIcon className="w-6"/>
                     </button>
                 </div>
