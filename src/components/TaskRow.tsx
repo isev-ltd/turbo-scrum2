@@ -15,7 +15,7 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function TaskRow({task, index}) {
+export default function TaskRow({task, index, dragStart, dragEnter, drop, dragLeave}) {
     // const [editMode, setEditMode] = useState(false);
     const [
         editingTask,
@@ -40,6 +40,11 @@ export default function TaskRow({task, index}) {
     return (
         <div data-id={task.id}
              className="relative rounded bg-slate-100 shadow p-4 text-slate-800 flex gap-2 items-center"
+             draggable
+             onDragStart={(e) => dragStart(e, index)}
+             onDragEnter={(e) => dragEnter(e, index)}
+             onDragEnd={drop}
+             onDragLeave={(e) => dragLeave(e, index)}
         >
             {blockedOrCompleted(task)}
             {editingTask?.id == task.id && editingTask?.key == "text" ? <div
@@ -168,8 +173,9 @@ export default function TaskRow({task, index}) {
     );
 }
 
+
 function blockedOrCompleted(task) {
-    return (<>
+    return (<  >
             <Transition
                 appear={true}
                 show={task.is_completed}
@@ -296,3 +302,4 @@ function TaskNameInput({task, text, setText, cancelUpdateTaskName, updateTask}) 
         </div>
     );
 }
+
